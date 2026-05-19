@@ -1,0 +1,230 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.3.1 effective-5.10 (swiftlang-6.3.1.1.2 clang-2100.0.123.102)
+// swift-module-flags: -target arm64-apple-ios14.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -O -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -module-name AIRECBleKit
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -formal-cxx-interoperability-mode=off -interface-compiler-version 6.3.1
+import AVFoundation
+import AudioToolbox
+import CoreBluetooth
+import Foundation
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_hasMissingDesignatedInitializers @objc final public class AIRECBleDevice : ObjectiveC.NSObject {
+  @objc final public var name: Swift.String {
+    @objc get
+  }
+  @objc final public var identifier: Swift.String {
+    @objc get
+  }
+  @objc final public var rssi: Swift.Int {
+    @objc get
+  }
+  @objc final public var battery: Swift.Int
+  @objc final public var storageUsed: Swift.Int64
+  @objc final public var storageTotal: Swift.Int64
+  @objc final public var firmwareVersion: Swift.String
+  @objc final public var isRecording: Swift.Bool
+  @objc final public var isCharging: Swift.Bool
+  @objc final public var recordDuration: Swift.Int64
+  final public var fileList: [AIRECBleKit.AIRECBleFile]
+  @objc final public var storageStr: Swift.String {
+    @objc get
+  }
+  @objc deinit
+}
+@objc final public class AIRECBleFile : ObjectiveC.NSObject {
+  @objc final public let fileName: Swift.String
+  @objc final public var fileSize: Swift.Int64 {
+    get
+  }
+  @objc final public let createTime: Swift.String
+  @objc final public var durationSec: Swift.Int
+  public init(fileName: Swift.String, fileSize: Swift.Int64)
+  @objc final public var fileSizeStr: Swift.String {
+    @objc get
+  }
+  @objc final public var durationStr: Swift.String {
+    @objc get
+  }
+  @objc deinit
+}
+public protocol AIRECBleDelegate : AnyObject {
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didDiscover device: AIRECBleKit.AIRECBleDevice)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didConnect device: AIRECBleKit.AIRECBleDevice)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didDisconnect device: AIRECBleKit.AIRECBleDevice?, reason: Swift.String)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didUpdateDeviceInfo device: AIRECBleKit.AIRECBleDevice)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didReceiveFirmwareVersion version: Swift.String)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didChangeBluetoothState enabled: Swift.Bool)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didUpdateFileList files: [AIRECBleKit.AIRECBleFile])
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didDeleteFile fileName: Swift.String, success: Swift.Bool)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didChangeRecordState recording: Swift.Bool, fileName: Swift.String)
+  func bleManagerDidPauseRecord(_ manager: AIRECBleKit.AIRECBleManager)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didQueryRecordStatus recording: Swift.Bool, paused: Swift.Bool, fileName: Swift.String)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didUpdateRecordDuration durationSec: Swift.Int64)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, downloadProgress file: AIRECBleKit.AIRECBleFile, progress: Swift.Int)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, downloadComplete file: AIRECBleKit.AIRECBleFile, localPath: Swift.String)
+  func bleManager(_ manager: AIRECBleKit.AIRECBleManager, downloadFailed file: AIRECBleKit.AIRECBleFile, reason: Swift.String)
+}
+extension AIRECBleKit.AIRECBleDelegate {
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didDiscover device: AIRECBleKit.AIRECBleDevice)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didConnect device: AIRECBleKit.AIRECBleDevice)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didDisconnect device: AIRECBleKit.AIRECBleDevice?, reason: Swift.String)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didUpdateDeviceInfo device: AIRECBleKit.AIRECBleDevice)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didReceiveFirmwareVersion version: Swift.String)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didChangeBluetoothState enabled: Swift.Bool)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didUpdateFileList files: [AIRECBleKit.AIRECBleFile])
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didDeleteFile fileName: Swift.String, success: Swift.Bool)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didChangeRecordState recording: Swift.Bool, fileName: Swift.String)
+  public func bleManagerDidPauseRecord(_ manager: AIRECBleKit.AIRECBleManager)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didQueryRecordStatus recording: Swift.Bool, paused: Swift.Bool, fileName: Swift.String)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, didUpdateRecordDuration durationSec: Swift.Int64)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, downloadProgress file: AIRECBleKit.AIRECBleFile, progress: Swift.Int)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, downloadComplete file: AIRECBleKit.AIRECBleFile, localPath: Swift.String)
+  public func bleManager(_ manager: AIRECBleKit.AIRECBleManager, downloadFailed file: AIRECBleKit.AIRECBleFile, reason: Swift.String)
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc final public class AIRECBleManager : ObjectiveC.NSObject {
+  @objc public static let shared: AIRECBleKit.AIRECBleManager
+  weak final public var delegate: (any AIRECBleKit.AIRECBleDelegate)?
+  final public var onAudioStreamData: ((Foundation.Data) -> Swift.Void)?
+  final public var onFormatResult: ((Swift.Bool, Swift.String) -> Swift.Void)?
+  @objc final public var ledSwitch: Swift.Bool
+  @objc final public var noiseSwitch: Swift.Bool
+  @objc final public var usbSwitch: Swift.Bool
+  @objc final public var powerOnRecord: Swift.Bool
+  @objc final public var diskFormatSupport: Swift.Bool
+  @objc final public var segmentDuration: Swift.Int
+  @objc final public var idleShutdown: Swift.Int
+  @objc final public var micGain: Swift.Int
+  @objc final public var macAddress: Swift.String
+  @objc final public func setup()
+  @objc final public var isConnected: Swift.Bool {
+    @objc get
+  }
+  @objc final public func getConnectedDevice() -> AIRECBleKit.AIRECBleDevice?
+  @objc final public func startScan()
+  @objc final public func stopScan()
+  @objc final public func connect(_ device: AIRECBleKit.AIRECBleDevice)
+  @objc final public func disconnect()
+  @objc final public func fetchDeviceInfo()
+  @objc final public func fetchAllDeviceInfo()
+  @objc final public func resumeRecord()
+  @objc final public func fetchFirmwareVersion()
+  @objc final public func fetchFileList()
+  @objc final public func deleteFile(_ fileName: Swift.String)
+  @objc final public func startRecord()
+  @objc final public func pauseRecord()
+  @objc final public func endRecord()
+  @objc final public func fetchInitParam()
+  @objc final public func sendLedSwitch(_ on: Swift.Bool)
+  @objc final public func sendNoiseSwitch(_ on: Swift.Bool)
+  @objc final public func sendUsbSwitch(_ on: Swift.Bool)
+  @objc final public func sendPowerOnRecord(_ on: Swift.Bool)
+  @objc final public func sendSegmentDuration(_ minutes: Swift.Int)
+  @objc final public func sendIdleShutdown(_ minutes: Swift.Int)
+  @objc final public func sendMicGain(_ gain: Swift.Int)
+  @objc final public func sendFormatDisk()
+  @objc final public func downloadFile(_ file: AIRECBleKit.AIRECBleFile)
+  @objc final public func cancelDownload()
+  @objc final public func isDownloaded(_ fileName: Swift.String) -> Swift.Bool
+  @objc final public func getLocalPath(_ fileName: Swift.String) -> Swift.String?
+  @objc deinit
+}
+extension AIRECBleKit.AIRECBleManager : CoreBluetooth.CBCentralManagerDelegate {
+  @objc final public func centralManagerDidUpdateState(_ central: CoreBluetooth.CBCentralManager)
+  @objc final public func centralManager(_ central: CoreBluetooth.CBCentralManager, didDiscover peripheral: CoreBluetooth.CBPeripheral, advertisementData: [Swift.String : Any], rssi RSSI: Foundation.NSNumber)
+  @objc final public func centralManager(_ central: CoreBluetooth.CBCentralManager, didConnect peripheral: CoreBluetooth.CBPeripheral)
+  @objc final public func centralManager(_ central: CoreBluetooth.CBCentralManager, didFailToConnect peripheral: CoreBluetooth.CBPeripheral, error: (any Swift.Error)?)
+  @objc final public func centralManager(_ central: CoreBluetooth.CBCentralManager, didDisconnectPeripheral peripheral: CoreBluetooth.CBPeripheral, error: (any Swift.Error)?)
+}
+extension AIRECBleKit.AIRECBleManager : CoreBluetooth.CBPeripheralDelegate {
+  @objc final public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didDiscoverServices error: (any Swift.Error)?)
+  @objc final public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didDiscoverCharacteristicsFor service: CoreBluetooth.CBService, error: (any Swift.Error)?)
+  @objc final public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didUpdateValueFor characteristic: CoreBluetooth.CBCharacteristic, error: (any Swift.Error)?)
+  @objc final public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didWriteValueFor characteristic: CoreBluetooth.CBCharacteristic, error: (any Swift.Error)?)
+}
+@objc public protocol AIRECPlayerDelegate {
+  @objc optional func playerDidStartPlaying(_ player: AIRECBleKit.AIRECPlayer)
+  @objc optional func playerDidPause(_ player: AIRECBleKit.AIRECPlayer)
+  @objc optional func playerDidStop(_ player: AIRECBleKit.AIRECPlayer)
+  @objc optional func playerDidFinish(_ player: AIRECBleKit.AIRECPlayer)
+  @objc optional func player(_ player: AIRECBleKit.AIRECPlayer, didUpdateProgress currentTime: Foundation.TimeInterval, duration: Foundation.TimeInterval)
+  @objc optional func player(_ player: AIRECBleKit.AIRECPlayer, didFailWithError error: Swift.String)
+}
+@_inheritsConvenienceInitializers @objc final public class AIRECPlayer : ObjectiveC.NSObject {
+  @objc weak final public var delegate: (any AIRECBleKit.AIRECPlayerDelegate)?
+  @objc final public var isPlaying: Swift.Bool {
+    get
+  }
+  @objc final public var duration: Swift.Double {
+    get
+  }
+  @objc final public var currentTime: Swift.Double {
+    get
+  }
+  @objc override dynamic public init()
+  @objc final public func play(filePath: Swift.String)
+  @objc final public func pause()
+  @objc final public func resume()
+  @objc final public func stop()
+  @objc final public func seek(to time: Foundation.TimeInterval)
+  @objc final public func clearCache(for filePath: Swift.String)
+  @objc final public func getShareablePath(for filePath: Swift.String, completion: @escaping (Swift.String?) -> Swift.Void)
+  @objc deinit
+}
+extension AIRECBleKit.AIRECPlayer : AVFAudio.AVAudioPlayerDelegate {
+  @objc final public func audioPlayerDidFinishPlaying(_ p: AVFAudio.AVAudioPlayer, successfully f: Swift.Bool)
+}
+@objc public enum AIRECAudioPlayerState : Swift.Int {
+  case idle = 0
+  case loading = 1
+  case playing = 2
+  case paused = 3
+  case finished = 4
+  case failed = 5
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc public protocol AIRECAudioPlayerDelegate {
+  @objc func audioPlayer(_ player: AIRECBleKit.AIRECAudioPlayer, didChangeState state: AIRECBleKit.AIRECAudioPlayerState)
+  @objc func audioPlayer(_ player: AIRECBleKit.AIRECAudioPlayer, didUpdateProgress current: Foundation.TimeInterval, total: Foundation.TimeInterval)
+  @objc func audioPlayer(_ player: AIRECBleKit.AIRECAudioPlayer, didFinishPlaying successfully: Swift.Bool)
+  @objc func audioPlayer(_ player: AIRECBleKit.AIRECAudioPlayer, didFailWithError error: Swift.String)
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc final public class AIRECAudioPlayer : ObjectiveC.NSObject {
+  @objc public static let shared: AIRECBleKit.AIRECAudioPlayer
+  @objc final public var onStateChanged: ((AIRECBleKit.AIRECAudioPlayerState) -> Swift.Void)?
+  @objc final public var onProgress: ((Foundation.TimeInterval, Foundation.TimeInterval) -> Swift.Void)?
+  @objc final public var onFinished: ((Swift.Bool) -> Swift.Void)?
+  @objc final public var onError: ((Swift.String) -> Swift.Void)?
+  @objc weak final public var delegate: (any AIRECBleKit.AIRECAudioPlayerDelegate)?
+  @objc final public var currentPath: Swift.String {
+    get
+  }
+  @objc final public var state: AIRECBleKit.AIRECAudioPlayerState {
+    @objc get
+    @objc set
+  }
+  @objc final public var isPlaying: Swift.Bool {
+    @objc get
+  }
+  @objc final public var currentTime: Foundation.TimeInterval {
+    @objc get
+  }
+  @objc final public var duration: Foundation.TimeInterval {
+    @objc get
+  }
+  @objc final public func playFile(_ path: Swift.String, completion: ((Swift.Bool, Swift.String) -> Swift.Void)? = nil)
+  @objc final public func stop()
+  @objc final public func pause()
+  @objc final public func resume()
+  @objc final public func seek(to time: Foundation.TimeInterval)
+  @objc override final public func observeValue(forKeyPath kp: Swift.String?, of obj: Any?, change: [Foundation.NSKeyValueChangeKey : Any]?, context: Swift.UnsafeMutableRawPointer?)
+  @objc deinit
+}
+extension AIRECBleKit.AIRECAudioPlayerState : Swift.Equatable {}
+extension AIRECBleKit.AIRECAudioPlayerState : Swift.Hashable {}
+extension AIRECBleKit.AIRECAudioPlayerState : Swift.RawRepresentable {}

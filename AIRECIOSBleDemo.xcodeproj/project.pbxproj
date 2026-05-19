@@ -1,0 +1,362 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CD6B4C2F9F414500F8579D /* ATWOpusConverter.swift */; };
+		946823DA2FBC2F72002F0C5F /* ScanPeripheralView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823D92FBC2F72002F0C5F /* ScanPeripheralView.swift */; };
+		946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */; };
+		A005 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* ScanViewController.swift */; };
+		A006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* MainViewController.swift */; };
+		A007 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* PlayerViewController.swift */; };
+		A008 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F008 /* AppDelegate.swift */; };
+		A009 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F009 /* SceneDelegate.swift */; };
+		A010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F010 /* Assets.xcassets */; };
+		A012 /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* FileCell.swift */; };
+		A013 /* DeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* DeviceCell.swift */; };
+		A014 /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* AudioItem.swift */; };
+		AKIT1 /* AIRECBleKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FKIT /* AIRECBleKit.framework */; };
+		AKIT2 /* AIRECBleKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FKIT /* AIRECBleKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AOPUS1 /* OpusDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FOPUS1 /* OpusDecoder.swift */; };
+		AOPUS2 /* libopus.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FOPUS2 /* libopus.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		PH_EMBED /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AKIT2 /* AIRECBleKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		67CD6B4C2F9F414500F8579D /* ATWOpusConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATWOpusConverter.swift; sourceTree = "<group>"; };
+		946823D92FBC2F72002F0C5F /* ScanPeripheralView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPeripheralView.swift; sourceTree = "<group>"; };
+		946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPeripheralViewController.swift; sourceTree = "<group>"; };
+		F005 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
+		F006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		F007 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
+		F008 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F009 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		F010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F011 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F012 /* FileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
+		F013 /* DeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCell.swift; sourceTree = "<group>"; };
+		F014 /* AudioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioItem.swift; sourceTree = "<group>"; };
+		FAPP /* AIRECIOSBleDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIRECIOSBleDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FINF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FKIT /* AIRECBleKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AIRECBleKit.framework; sourceTree = "<group>"; };
+		FOPUS1 /* OpusDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpusDecoder.swift; sourceTree = "<group>"; };
+		FOPUS2 /* libopus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libopus.a; sourceTree = "<group>"; };
+		FOPUS3 /* AIRECIOSBleDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AIRECIOSBleDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		PH_FW /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AKIT1 /* AIRECBleKit.framework in Frameworks */,
+				AOPUS2 /* libopus.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GRP_APP /* AIRECIOSBleDemo */ = {
+			isa = PBXGroup;
+			children = (
+				F008 /* AppDelegate.swift */,
+				F009 /* SceneDelegate.swift */,
+				F014 /* AudioItem.swift */,
+				F005 /* ScanViewController.swift */,
+				946823D92FBC2F72002F0C5F /* ScanPeripheralView.swift */,
+				946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */,
+				F006 /* MainViewController.swift */,
+				F007 /* PlayerViewController.swift */,
+				67CD6B4C2F9F414500F8579D /* ATWOpusConverter.swift */,
+				F012 /* FileCell.swift */,
+				F013 /* DeviceCell.swift */,
+				FOPUS1 /* OpusDecoder.swift */,
+				FOPUS2 /* libopus.a */,
+				FOPUS3 /* AIRECIOSBleDemo-Bridging-Header.h */,
+				F010 /* Assets.xcassets */,
+				F011 /* LaunchScreen.storyboard */,
+				FINF /* Info.plist */,
+			);
+			path = AIRECIOSBleDemo;
+			sourceTree = "<group>";
+		};
+		GRP_FW /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FKIT /* AIRECBleKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		GRP_PROD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FAPP /* AIRECIOSBleDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GRP_ROOT = {
+			isa = PBXGroup;
+			children = (
+				GRP_APP /* AIRECIOSBleDemo */,
+				GRP_PROD /* Products */,
+				GRP_FW /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TGT_APP /* AIRECIOSBleDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFGL_APP /* Build configuration list for PBXNativeTarget "AIRECIOSBleDemo" */;
+			buildPhases = (
+				PH_SRC /* Sources */,
+				PH_FW /* Frameworks */,
+				PH_RES /* Resources */,
+				PH_EMBED /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AIRECIOSBleDemo;
+			productName = AIRECIOSBleDemo;
+			productReference = FAPP /* AIRECIOSBleDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJ /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					TGT_APP = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = CFGL_PROJ /* Build configuration list for PBXProject "AIRECIOSBleDemo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = "zh-Hans";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = GRP_ROOT;
+			productRefGroup = GRP_PROD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TGT_APP /* AIRECIOSBleDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		PH_RES /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A010 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		PH_SRC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A008 /* AppDelegate.swift in Sources */,
+				946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */,
+				67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */,
+				A009 /* SceneDelegate.swift in Sources */,
+				A014 /* AudioItem.swift in Sources */,
+				A005 /* ScanViewController.swift in Sources */,
+				A006 /* MainViewController.swift in Sources */,
+				A007 /* PlayerViewController.swift in Sources */,
+				A012 /* FileCell.swift in Sources */,
+				946823DA2FBC2F72002F0C5F /* ScanPeripheralView.swift in Sources */,
+				A013 /* DeviceCell.swift in Sources */,
+				AOPUS1 /* OpusDecoder.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BC_APP_DBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JBGE9CY6EW;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)";
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/AIRECIOSBleDemo/opus_include";
+				INFOPLIST_FILE = AIRECIOSBleDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/AIRECIOSBleDemo";
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-force_load",
+					"$(SRCROOT)/AIRECIOSBleDemo/libopus.a",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.icourt.ai.note;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "AIRECIOSBleDemo/AIRECIOSBleDemo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BC_APP_REL /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JBGE9CY6EW;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)";
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/AIRECIOSBleDemo/opus_include";
+				INFOPLIST_FILE = AIRECIOSBleDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/AIRECIOSBleDemo";
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-force_load",
+					"$(SRCROOT)/AIRECIOSBleDemo/libopus.a",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.icourt.ai.note;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "AIRECIOSBleDemo/AIRECIOSBleDemo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BC_PROJ_DBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BC_PROJ_REL /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFGL_APP /* Build configuration list for PBXNativeTarget "AIRECIOSBleDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC_APP_DBG /* Debug */,
+				BC_APP_REL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFGL_PROJ /* Build configuration list for PBXProject "AIRECIOSBleDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC_PROJ_DBG /* Debug */,
+				BC_PROJ_REL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = PROJ /* Project object */;
+}

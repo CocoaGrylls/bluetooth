@@ -1,0 +1,3 @@
+framework module AIRECBleKit {
+  header "AIRECBleKit-Swift.h"
+}
