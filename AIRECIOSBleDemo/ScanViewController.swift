@@ -10,6 +10,7 @@ class ScanViewController: UIViewController {
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     private let statusLabel = UILabel()
     private let spinner = UIActivityIndicatorView(style: .medium)
+    private let scanPeripheralView = ScanPeripheralView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +47,17 @@ class ScanViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
+        // 添加 ScanPeripheralView
+        scanPeripheralView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scanPeripheralView)
+        NSLayoutConstraint.activate([
+            scanPeripheralView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            scanPeripheralView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scanPeripheralView.widthAnchor.constraint(equalToConstant: 180),
+            scanPeripheralView.heightAnchor.constraint(equalToConstant: 180)
+        ])
+        scanPeripheralView.startAnimation()
+
         AIRECBleManager.shared.delegate = self
         AIRECBleManager.shared.startScan()
     }
@@ -68,6 +80,7 @@ class ScanViewController: UIViewController {
 
     @objc private func cancelTapped() {
         AIRECBleManager.shared.stopScan()
+        scanPeripheralView.stopAnimation()
         dismiss(animated: true)
     }
 
@@ -76,6 +89,7 @@ class ScanViewController: UIViewController {
         tableView.reloadData()
         statusLabel.text = "扫描中..."
         spinner.startAnimating()
+        scanPeripheralView.startAnimation()
         AIRECBleManager.shared.startScan()
     }
 }
@@ -113,6 +127,7 @@ extension ScanViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
         spinner.stopAnimating()
+        scanPeripheralView.stopAnimation()
         // 先切换 delegate 到 MainViewController
         onConnected?()
         // 手动把 didConnect 转发给新 delegate（MainViewController）
@@ -127,12 +142,17 @@ extension ScanViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
         spinner.stopAnimating()
+        scanPeripheralView.stopAnimation()
         let msg = reason.contains("超时") ? "连接超时，请靠近设备重试" : "连接失败，请重试"
         statusLabel.text = msg
         showAlert(title: "连接失败", message: msg)
     }
 
     func bleManager(_ manager: AIRECBleManager, didChangeBluetoothState enabled: Bool) {
-        if !enabled { spinner.stopAnimating(); statusLabel.text = "蓝牙已关闭，请开启蓝牙" }
+        if !enabled {
+            spinner.stopAnimating()
+            scanPeripheralView.stopAnimation()
+            statusLabel.text = "蓝牙已关闭，请开启蓝牙"
+        }
     }
 }

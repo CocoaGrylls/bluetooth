@@ -1,15 +1,9 @@
-//
-//  ScanPeripheralView.swift
-//  AIRECIOSBleDemo
-//
-//  Created by 李龙飞 on 2026/5/19.
-//
-
 import UIKit
+import SnapKit
 
 class ScanPeripheralView: UIView {
 
-   private let imageView = UIImageView()
+    private let imageView = UIImageView()
     private let pulseLayer = CAShapeLayer()
     private let animationGroup = CAAnimationGroup()
     private var isAnimating = false
@@ -27,14 +21,11 @@ class ScanPeripheralView: UIView {
         // 蓝牙图标
         imageView.image = UIImage(named: "bluetooth")
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
-        NSLayoutConstraint.activate([
-            imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 48),
-            imageView.heightAnchor.constraint(equalToConstant: 48)
-        ])
+        imageView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(48)
+        }
 
         // 雷达脉冲层
         pulseLayer.fillColor = UIColor.systemBlue.withAlphaComponent(0.2).cgColor
@@ -75,5 +66,4 @@ class ScanPeripheralView: UIView {
         isAnimating = false
         pulseLayer.removeAllAnimations()
     }
-
 }

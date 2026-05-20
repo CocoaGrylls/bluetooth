@@ -316,16 +316,23 @@ extension MainViewController {
         
         //修改为新VC
         let scanController = ScanPeripheralViewController()
-        present(UINavigationController(rootViewController: scanController), animated: true)
-        /*
-        let vc = ScanViewController()
-        vc.onConnected = { [weak self] in
+        scanController.onConnected = { [weak self] in
             guard let self = self else { return }
             // 切换 delegate，ScanViewController 会手动转发 didConnect 给 MainViewController
             AIRECBleManager.shared.delegate = self
         }
-        present(UINavigationController(rootViewController: vc), animated: true)
-         */
+        let nav = UINavigationController(rootViewController: scanController)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
+        
+//        let vc = ScanViewController()
+//        vc.onConnected = { [weak self] in
+//            guard let self = self else { return }
+//            // 切换 delegate，ScanViewController 会手动转发 didConnect 给 MainViewController
+//            AIRECBleManager.shared.delegate = self
+//        }
+//        present(UINavigationController(rootViewController: vc), animated: true)
+         
     }
 
     @objc private func otaTapped() {

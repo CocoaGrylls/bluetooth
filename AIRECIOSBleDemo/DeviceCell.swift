@@ -1,35 +1,73 @@
 import UIKit
 import AIRECBleKit
+import SnapKit
 
 class DeviceCell: UITableViewCell {
     static let reuseId = "DeviceCell"
 
-    private let nameLabel  = UILabel()
-    private let rssiLabel  = UILabel()
+    private let iconView = UIImageView()
+    private let nameLabel = UILabel()
+    private let signalLabel = UILabel()
+    let connectButton = UIButton(type: .system)
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        nameLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        rssiLabel.font = .systemFont(ofSize: 13)
-        rssiLabel.textColor = .secondaryLabel
-        rssiLabel.textAlignment = .right
-
-        let stack = UIStackView(arrangedSubviews: [nameLabel, rssiLabel])
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(stack)
-        NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-        ])
+        setupUI()
     }
-    required init?(coder: NSCoder) { fatalError() }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupUI()
+    }
+
+    private func setupUI() {
+        // 麦克风图片
+        iconView.image = UIImage(named: "micphone")
+        iconView.contentMode = .scaleAspectFit
+        contentView.addSubview(iconView)
+        iconView.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(32)
+        }
+
+        // 设备名称
+        nameLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        nameLabel.textColor = .label
+
+        // 信号
+        signalLabel.font = .systemFont(ofSize: 13)
+        signalLabel.textColor = .secondaryLabel
+
+        // 垂直堆叠
+        let vStack = UIStackView(arrangedSubviews: [nameLabel, signalLabel])
+        vStack.axis = .vertical
+        vStack.spacing = 2
+        contentView.addSubview(vStack)
+        vStack.snp.makeConstraints { make in
+            make.left.equalTo(iconView.snp.right).offset(12)
+            make.centerY.equalToSuperview()
+        }
+
+        // 连接按钮
+        connectButton.setTitle("连接", for: .normal)
+        connectButton.setTitleColor(.systemBlue, for: .normal)
+        connectButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .medium)
+        connectButton.layer.cornerRadius = 6
+        connectButton.layer.borderWidth = 1
+        connectButton.layer.borderColor = UIColor.systemBlue.cgColor
+        contentView.addSubview(connectButton)
+        connectButton.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-16)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(60)
+            make.height.equalTo(32)
+            make.left.greaterThanOrEqualTo(vStack.snp.right).offset(8)
+        }
+    }
 
     func configure(device: AIRECBleDevice) {
-        nameLabel.text = device.name
-        rssiLabel.text = "\(device.rssi) dBm"
+        nameLabel.text = device.name ?? "未知设备"
+        signalLabel.text = "信号: \(device.rssi)"
     }
 }
