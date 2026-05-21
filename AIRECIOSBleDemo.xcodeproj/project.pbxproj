@@ -11,6 +11,7 @@
 		946823DA2FBC2F72002F0C5F /* ScanRadarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823D92FBC2F72002F0C5F /* ScanRadarView.swift */; };
 		946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */; };
 		946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C52FBC6645002F0C5F /* ScanContainerView.swift */; };
+		946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C92FBED57E002F0C5F /* HomeViewViewController.swift */; };
 		A005 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* ScanViewController.swift */; };
 		A006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* MainViewController.swift */; };
 		A007 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* PlayerViewController.swift */; };
@@ -49,6 +50,7 @@
 		946823D92FBC2F72002F0C5F /* ScanRadarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanRadarView.swift; sourceTree = "<group>"; };
 		946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPeripheralViewController.swift; sourceTree = "<group>"; };
 		946824C52FBC6645002F0C5F /* ScanContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanContainerView.swift; sourceTree = "<group>"; };
+		946824C92FBED57E002F0C5F /* HomeViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewController.swift; sourceTree = "<group>"; };
 		F005 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
 		F006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F007 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */,
+				946824C92FBED57E002F0C5F /* HomeViewViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 			files = (
 				A008 /* AppDelegate.swift in Sources */,
 				946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */,
+				946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */,
 				946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */,
 				67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */,
 				A009 /* SceneDelegate.swift in Sources */,

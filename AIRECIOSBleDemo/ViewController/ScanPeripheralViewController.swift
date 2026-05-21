@@ -25,8 +25,11 @@ class ScanPeripheralViewController: UIViewController {
     //设置导航栏
     func setupNav() {
         title = "连接设备"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
+        // 设置导航栏左侧关闭按钮,图标使用close自定义图标
+        let closeButton = UIButton(type: .custom)
+        closeButton.setImage(UIImage(named: "close_icon"), for: .normal)
+        closeButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)   
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "questionmark.circle"),
             style: .plain,
@@ -131,7 +134,8 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return "附近设备"
+        //显示目前扫描到的设备数量
+        return "附近设备（\(devices.count)）"
     }
 }
 
