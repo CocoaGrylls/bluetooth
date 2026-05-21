@@ -11,7 +11,7 @@ import SnapKit
 
 class ScanContainerView: UIView {
     
-    let scanView = ScanPeripheralView()
+    let scanView = ScanRadarView()
     let scanTitleLabel = UILabel()
     let descLabel = UILabel()
     let stopButton = UIButton(type: .system)
@@ -36,7 +36,6 @@ class ScanContainerView: UIView {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(140)
         }
-        scanView.startAnimation()
 
         scanTitleLabel.text = "正在搜索设备..."
         scanTitleLabel.font = .systemFont(ofSize: 18)
@@ -72,5 +71,14 @@ class ScanContainerView: UIView {
             make.height.equalTo(36)
             make.width.equalTo(110)
         }
+    }
+
+    //开始扫描开始动画
+    func startScanningAnimation() {
+        scanView.startAnimation()
+    }
+    //结束扫描停止动画
+    func stopScanningAnimation() {
+        scanView.stopAnimation()
     }
 }

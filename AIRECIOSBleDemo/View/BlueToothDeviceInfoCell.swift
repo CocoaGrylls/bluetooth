@@ -2,8 +2,10 @@ import UIKit
 import AIRECBleKit
 import SnapKit
 
-class DeviceCell: UITableViewCell {
+class BlueToothDeviceInfoCell: UITableViewCell {
     static let reuseId = "DeviceCell"
+    //block: 连接按钮点击事件回调
+    var connectButtonTapped: (() -> Void)?
 
     private let iconView = UIImageView()
     private let nameLabel = UILabel()
@@ -23,12 +25,15 @@ class DeviceCell: UITableViewCell {
     private func setupUI() {
         // 麦克风图片
         iconView.image = UIImage(named: "micphone")
-        iconView.contentMode = .scaleAspectFit
+        iconView.backgroundColor = UIColor.lightGray
+        iconView.layer.cornerRadius = 30
+        iconView.clipsToBounds = true
+        iconView.contentMode = .center
         contentView.addSubview(iconView)
         iconView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(16)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(32)
+            make.width.height.equalTo(60)
         }
 
         // 设备名称
@@ -57,6 +62,7 @@ class DeviceCell: UITableViewCell {
         connectButton.layer.borderWidth = 1
         connectButton.layer.borderColor = UIColor.systemBlue.cgColor
         contentView.addSubview(connectButton)
+        connectButton.addTarget(self, action: #selector(connectTapped), for: .touchUpInside)
         connectButton.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-16)
             make.centerY.equalToSuperview()
@@ -66,8 +72,28 @@ class DeviceCell: UITableViewCell {
         }
     }
 
-    func configure(device: AIRECBleDevice) {
-        nameLabel.text = device.name ?? "未知设备"
-        signalLabel.text = "信号: \(device.rssi)"
+    @objc private func connectTapped() {
+        // Handle connect button tap
+        print("Connect button tapped")
+        connectButtonTapped?()
     }
+
+    func configure(device: AIRECBleDevice) {
+        nameLabel.text = device.name
+        signalLabel.text = "信号: \(convertRSSIToStrength(rssi: device.rssi))"
+    }
+    //转换信号device.rssi为强度
+    private func convertRSSIToStrength(rssi: Int) -> String {
+        switch rssi {
+        case -100...(-80):
+            return "弱"
+        case -79...(-60):
+            return "中"
+        case -59...0:
+            return "强"
+        default:
+            return "未知"
+        }
+    }
+
 }

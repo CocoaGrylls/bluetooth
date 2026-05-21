@@ -10,7 +10,7 @@ class ScanViewController: UIViewController {
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     private let statusLabel = UILabel()
     private let spinner = UIActivityIndicatorView(style: .medium)
-    private let scanPeripheralView = ScanPeripheralView()
+    private let scanPeripheralView = ScanRadarView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +27,7 @@ class ScanViewController: UIViewController {
         statusLabel.textColor = .secondaryLabel
         spinner.startAnimating()
 
-        tableView.register(DeviceCell.self, forCellReuseIdentifier: DeviceCell.reuseId)
+        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
         tableView.dataSource = self
         tableView.delegate   = self
 
@@ -97,7 +97,7 @@ class ScanViewController: UIViewController {
 extension ScanViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { devices.count }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: DeviceCell.reuseId, for: indexPath) as! DeviceCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: BlueToothDeviceInfoCell.reuseId, for: indexPath) as! BlueToothDeviceInfoCell
         cell.configure(device: devices[indexPath.row])
         return cell
     }

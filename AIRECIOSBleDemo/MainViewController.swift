@@ -67,11 +67,31 @@ class MainViewController: UIViewController {
     private let filterSegment   = UISegmentedControl(items: ["全部", "设备", "本地"])
     private let tableView       = UITableView(frame: .zero, style: .plain)
     private var tableViewHeightConstraint: NSLayoutConstraint?
+    
+    
+    @objc private func showScanPeripheral() {
+        //修改为新VC
+        let scanController = ScanPeripheralViewController()
+        scanController.onConnected = { [weak self] in
+            guard let self = self else { return }
+            // 切换 delegate，ScanViewController 会手动转发 didConnect 给 MainViewController
+            AIRECBleManager.shared.delegate = self
+        }
+        let nav = UINavigationController(rootViewController: scanController)
+        nav.modalPresentationStyle = .fullScreen
+        present(nav, animated: true)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "灵犀"
         view.backgroundColor = .systemGroupedBackground
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+                title: "扫描设备",
+                style: .plain,
+                target: self,
+                action: #selector(showScanPeripheral)
+            )
         buildUI()
         showDisconnectedUI()
         AIRECBleManager.shared.delegate = self
@@ -379,8 +399,10 @@ extension MainViewController {
             print("AIREC_STREAM: received \(data.count) bytes, header: \(bytes.prefix(min(4, bytes.count)).map{String(format:"%02X",$0)}.joined(separator:" "))")
         }
         AIRECBleManager.shared.startRecord()
-        isRecording = true; isPaused = false
-        startLocalTimer(); updateRecordButtons()
+        isRecording = true;
+        isPaused = false
+        startLocalTimer();
+        updateRecordButtons()
         startWaveAnimation()
     }
 
@@ -388,11 +410,15 @@ extension MainViewController {
         appInitiatedPauseResume = true  // 标记为 App 主动发起
         if isPaused {
             AIRECBleManager.shared.resumeRecord()
-            isPaused = false; pauseRecBtn.setTitle("暂停", for: .normal); resumeLocalTimer()
+            isPaused = false;
+            pauseRecBtn.setTitle("暂停", for: .normal);
+            resumeLocalTimer()
             startWaveAnimation()
         } else {
             AIRECBleManager.shared.pauseRecord()
-            isPaused = true; pauseRecBtn.setTitle("继续", for: .normal); pauseLocalTimer()
+            isPaused = true;
+            pauseRecBtn.setTitle("继续", for: .normal);
+            pauseLocalTimer()
             stopWaveAnimation()
         }
         updateRecordButtons()
@@ -545,14 +571,22 @@ extension MainViewController {
 
 // MARK: - UI State
 extension MainViewController {
+    
     private func showConnectedUI() {
         connectCard.isHidden = true
-        connectedCard.isHidden = false; recordCard.isHidden = false; fileCard.isHidden = false
-        if let dev = AIRECBleManager.shared.getConnectedDevice() { lastDevice = dev; updateDeviceInfo(dev) }
+        connectedCard.isHidden = false;
+        recordCard.isHidden = false
+        fileCard.isHidden = false
+        if let dev = AIRECBleManager.shared.getConnectedDevice() {
+            lastDevice = dev;
+            updateDeviceInfo(dev)
+        }
         // 如果设备在录音中，同步显示录音状态
         if isRecording {
             recordTimeLabel.textColor = .systemRed
-            if !isPaused { startLocalTimer() }
+            if !isPaused {
+                startLocalTimer()
+            }
         }
         updateRecordButtons()
     }
@@ -840,7 +874,8 @@ extension MainViewController: AIRECBleDelegate {
 
         print("AIREC_iOS: didConnect called, device=\(device.name)")
 
-        lastDevice = device; initialInfoFetched = false
+        lastDevice = device;
+        initialInfoFetched = false
         // 立即接管 delegate，防止 ScanViewController dismiss 后回调丢失
         AIRECBleManager.shared.delegate = self
         showConnectedUI()
@@ -868,7 +903,9 @@ extension MainViewController: AIRECBleDelegate {
     }
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
-        stopBatteryPoll(); stopLocalTimer(); initialInfoFetched = false
+        stopBatteryPoll();
+        stopLocalTimer();
+        initialInfoFetched = false
         showDisconnectedUI()
         if let last = lastDevice {
             showToast("设备断开，3秒后自动重连...")
@@ -885,13 +922,15 @@ extension MainViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didUpdateFileList files: [AIRECBleFile]) {
         print("AIREC_iOS: didUpdateFileList called with \(files.count) files")
-        if AIRECBleManager.shared.isConnected && connectedCard.isHidden { showConnectedUI() }
+        if AIRECBleManager.shared.isConnected && connectedCard.isHidden { showConnectedUI()
+        }
         mergeAndDisplay(deviceFiles: files)
     }
 
     func bleManager(_ manager: AIRECBleManager, didDeleteFile fileName: String, success: Bool) {
         showToast(success ? "删除成功" : "删除失败")
-        if success { AIRECBleManager.shared.fetchFileList() }
+        if success { AIRECBleManager.shared.fetchFileList()
+        }
     }
 
     func bleManager(_ manager: AIRECBleManager, didChangeRecordState recording: Bool, fileName: String) {

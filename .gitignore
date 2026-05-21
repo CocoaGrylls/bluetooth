@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Xcode user state
+*.xcuserstate
+xcuserdata/
+
+# Xcode build output
+build/
+DerivedData/
+
+# Swift Package Manager
+.build/
+
+# CocoaPods local artifacts
+Pods/.build/

@@ -21,11 +21,9 @@ class ScanPeripheralViewController: UIViewController {
     private var seenIds = Set<String>()
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemGroupedBackground
 
-        // 使用系统导航栏标题
+    //设置导航栏
+    func setupNav() {
         title = "连接设备"
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .cancel, target: self, action: #selector(cancelTapped))
@@ -35,7 +33,10 @@ class ScanPeripheralViewController: UIViewController {
             target: self,
             action: #selector(helpAction)
         )
+    }
 
+    //创建页面元素
+    func setupView() {
         // 配置 radarContainer 作为 tableHeaderView
         radarContainer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 220)
         tableView.tableHeaderView = radarContainer
@@ -44,7 +45,8 @@ class ScanPeripheralViewController: UIViewController {
         // 配置 tableView
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(DeviceCell.self, forCellReuseIdentifier: DeviceCell.reuseId)
+        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
+        tableView.register(EmptyAIRECDeviceCell.self, forCellReuseIdentifier: EmptyAIRECDeviceCell.reuseId)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .singleLine
         view.addSubview(tableView)
@@ -53,15 +55,22 @@ class ScanPeripheralViewController: UIViewController {
             make.left.right.bottom.equalToSuperview()
         }
 
-        // 刷新icon（可选，放在header里更合适）
-        // view.addSubview(refreshIcon)
-        // refreshIcon.snp.makeConstraints { make in
-        //     make.top.equalTo(tableView.snp.top).offset(8)
-        //     make.right.equalToSuperview().offset(-16)
-        // }
+    }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = .systemGroupedBackground
+
+        // 使用系统导航栏标题
+        setupNav()
+
+        // 创建页面元素
+        setupView()
 
         AIRECBleManager.shared.delegate = self
         AIRECBleManager.shared.startScan()
+        
+        radarContainer.startScanningAnimation()
     }
     
     @objc func cancelTapped() {
@@ -87,19 +96,34 @@ class ScanPeripheralViewController: UIViewController {
 
 extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return devices.isEmpty ? 100 : 80
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        devices.count
+        return devices.isEmpty ? 1 : devices.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: DeviceCell.reuseId, for: indexPath) as! DeviceCell
+        guard !devices.isEmpty else {
+            return tableView.dequeueReusableCell(withIdentifier: EmptyAIRECDeviceCell.reuseId, for: indexPath)
+        }
+
+        let cell = tableView.dequeueReusableCell(withIdentifier: BlueToothDeviceInfoCell.reuseId, for: indexPath) as! BlueToothDeviceInfoCell
         cell.configure(device: devices[indexPath.row])
+        cell.connectButtonTapped = { [weak self] in
+            guard let self = self else { return }
+            let device = self.devices[indexPath.row]
+            AIRECBleManager.shared.stopScan()
+            AIRECBleManager.shared.connect(device)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         tableView.deselectRow(at: indexPath, animated: true)
+        guard !devices.isEmpty else { return }
+
         let device = devices[indexPath.row]
         AIRECBleManager.shared.stopScan()
         AIRECBleManager.shared.connect(device)
@@ -108,6 +132,35 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "附近设备"
+    }
+}
+
+private class EmptyAIRECDeviceCell: UITableViewCell {
+
+    static let reuseId = "EmptyAIRECDeviceCell"
+
+    private let emptyLabel = UILabel()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupUI()
+    }
+
+    private func setupUI() {
+        selectionStyle = .none
+        emptyLabel.text = "暂无可用AIREC设备"
+        emptyLabel.font = .systemFont(ofSize: 16)
+        emptyLabel.textColor = .secondaryLabel
+        emptyLabel.textAlignment = .center
+        contentView.addSubview(emptyLabel)
+        emptyLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+        }
     }
 }
 
@@ -145,4 +198,3 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
         }
     }
 }
-
