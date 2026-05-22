@@ -12,6 +12,8 @@
 		946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */; };
 		946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C52FBC6645002F0C5F /* ScanContainerView.swift */; };
 		946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C92FBED57E002F0C5F /* HomeViewViewController.swift */; };
+		946824CC2FBF3921002F0C5F /* BluetoothRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824CB2FBF3921002F0C5F /* BluetoothRingView.swift */; };
+		946824CE2FC00001002F0C5F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824CD2FC00001002F0C5F /* Theme.swift */; };
 		A005 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* ScanViewController.swift */; };
 		A006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* MainViewController.swift */; };
 		A007 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* PlayerViewController.swift */; };
@@ -51,6 +53,8 @@
 		946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPeripheralViewController.swift; sourceTree = "<group>"; };
 		946824C52FBC6645002F0C5F /* ScanContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanContainerView.swift; sourceTree = "<group>"; };
 		946824C92FBED57E002F0C5F /* HomeViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewController.swift; sourceTree = "<group>"; };
+		946824CB2FBF3921002F0C5F /* BluetoothRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothRingView.swift; sourceTree = "<group>"; };
+		946824CD2FC00001002F0C5F /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		F005 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
 		F006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F007 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
@@ -107,13 +111,31 @@
 			children = (
 				946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */,
 				946824C92FBED57E002F0C5F /* HomeViewViewController.swift */,
+				946824CB2FBF3921002F0C5F /* BluetoothRingView.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		946824CB2FC02EA2002F0C5F /* AppTheme */ = {
+			isa = PBXGroup;
+			children = (
+				946824CD2FC00001002F0C5F /* Theme.swift */,
+			);
+			path = AppTheme;
+			sourceTree = "<group>";
+		};
+		946824CC2FC02EC6002F0C5F /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Manager;
 			sourceTree = "<group>";
 		};
 		GRP_APP /* AIRECIOSBleDemo */ = {
 			isa = PBXGroup;
 			children = (
+				946824CC2FC02EC6002F0C5F /* Manager */,
+				946824CB2FC02EA2002F0C5F /* AppTheme */,
 				946824C82FBD8997002F0C5F /* ViewController */,
 				946824C72FBD6472002F0C5F /* View */,
 				F008 /* AppDelegate.swift */,
@@ -283,6 +305,8 @@
 				A008 /* AppDelegate.swift in Sources */,
 				946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */,
 				946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */,
+				946824CC2FBF3921002F0C5F /* BluetoothRingView.swift in Sources */,
+				946824CE2FC00001002F0C5F /* Theme.swift in Sources */,
 				946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */,
 				67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */,
 				A009 /* SceneDelegate.swift in Sources */,

@@ -24,7 +24,7 @@ class ScanRadarView: UIView {
         addSubview(bluetoothIcon)
         bluetoothIcon.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.width.height.equalTo(48)
+            make.width.height.equalTo(30)
         }
 
         setupRippleLayers()

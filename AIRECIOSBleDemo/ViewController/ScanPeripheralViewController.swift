@@ -13,13 +13,29 @@ class ScanPeripheralViewController: UIViewController {
     
     var onConnected: (() -> Void)?
 
-    let radarContainer = ScanContainerView()
     let refreshIcon = UIActivityIndicatorView(style: .medium)
     let helpButton = UIButton(type: .system)
 
     private var devices: [AIRECBleDevice] = []
     private var seenIds = Set<String>()
-    private let tableView = UITableView(frame: .zero, style: .insetGrouped)
+
+    private lazy var radarContainer: ScanContainerView = {
+        let radarContainer = ScanContainerView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 220))
+        radarContainer.stopButton.addTarget(self, action: #selector(stopScan), for: .touchUpInside)
+        return radarContainer
+    }()
+
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
+        tableView.register(EmptyAIRECDeviceCell.self, forCellReuseIdentifier: EmptyAIRECDeviceCell.reuseId)
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .singleLine
+        tableView.tableHeaderView = radarContainer
+        return tableView
+    }()
 
 
     //设置导航栏
@@ -40,25 +56,13 @@ class ScanPeripheralViewController: UIViewController {
 
     //创建页面元素
     func setupView() {
-        // 配置 radarContainer 作为 tableHeaderView
-        radarContainer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 220)
-        tableView.tableHeaderView = radarContainer
-        radarContainer.stopButton.addTarget(self, action: #selector(stopScan), for: .touchUpInside)
-
-        // 配置 tableView
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
-        tableView.register(EmptyAIRECDeviceCell.self, forCellReuseIdentifier: EmptyAIRECDeviceCell.reuseId)
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .singleLine
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.left.right.bottom.equalToSuperview()
         }
-
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -75,10 +79,10 @@ class ScanPeripheralViewController: UIViewController {
         
         radarContainer.startScanningAnimation()
     }
-    
+
     @objc func cancelTapped() {
         AIRECBleManager.shared.stopScan()
-        dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     @objc func helpAction() {
         // 实现帮助按钮逻辑
@@ -180,12 +184,14 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
         radarContainer.scanView.stopAnimation()
-        // 先切换 delegate 到 MainViewController
-        // 手动把 didConnect 转发给新 delegate（MainViewController）
-        // 因为 SDK 只触发一次，切换 delegate 后需要手动补发
         DispatchQueue.main.async {
-            AIRECBleManager.shared.delegate?.bleManager(manager, didConnect: device)
-            self.dismiss(animated: true)
+            self.onConnected?()
+            if let delegate = AIRECBleManager.shared.delegate, delegate !== self {
+                delegate.bleManager(manager, didConnect: device)
+            }
+            
+            self.navigationController?.popViewController(animated: true)
+            
         }
     }
 
