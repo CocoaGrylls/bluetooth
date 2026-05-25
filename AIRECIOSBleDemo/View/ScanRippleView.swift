@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class ScanRadarView: UIView {
+class ScanRippleView: UIView {
 
     private let bluetoothIcon = UIImageView()
     private let rippleLayerCount = 3

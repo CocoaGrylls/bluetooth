@@ -10,7 +10,7 @@ class ScanViewController: UIViewController {
     private let tableView = UITableView(frame: .zero, style: .insetGrouped)
     private let statusLabel = UILabel()
     private let spinner = UIActivityIndicatorView(style: .medium)
-    private let scanPeripheralView = ScanRadarView()
+    private let scanPeripheralView = ScanRippleView()
 
     override func viewDidLoad() {
         super.viewDidLoad()

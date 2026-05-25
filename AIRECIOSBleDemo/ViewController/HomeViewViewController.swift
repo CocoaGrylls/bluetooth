@@ -17,15 +17,20 @@ class HomeViewViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.title = "首页";
+        self.title = "首页";
         setupView()
+        AIRECBleChannel.shared.addObserver(self)
         refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        AIRECBleManager.shared.delegate = self
+        AIRECBleChannel.shared.activate()
         refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
+    }
+
+    deinit {
+        AIRECBleChannel.shared.removeObserver(self)
     }
 
     private func setupView() {
@@ -145,7 +150,7 @@ class HomeViewViewController: UIViewController {
         }
 
         let availableDeviceLabel = UILabel()
-        availableDeviceLabel.text = "可用设备"
+        availableDeviceLabel.text = "发现设备"
         availableDeviceLabel.textColor = Theme.bluetoothHeaderMutedText
         availableDeviceLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         availableDeviceButton.addSubview(availableDeviceLabel)
@@ -167,9 +172,9 @@ class HomeViewViewController: UIViewController {
     }
 
     private func refreshBluetoothInfoView(shouldFetchDeviceInfo: Bool = false) {
-        let manager = AIRECBleManager.shared
+        let channel = AIRECBleChannel.shared
         
-        guard manager.isConnected, let device = manager.getConnectedDevice()
+        guard channel.isConnected, let device = channel.getConnectedDevice()
         else {
             connectionTitleLabel.text = "未连接设备"
             connectionSubtitleLabel.text = "请连接蓝牙录音卡设备"
@@ -184,7 +189,7 @@ class HomeViewViewController: UIViewController {
         connectButton.setImage(UIImage(systemName: "info.circle"), for: .normal)
 
         if shouldFetchDeviceInfo {
-            manager.fetchAllDeviceInfo()
+            channel.fetchAllDeviceInfo()
         }
     }
 
@@ -203,16 +208,12 @@ class HomeViewViewController: UIViewController {
     }
 
     @objc private func connectButtonTapped() {
-        if AIRECBleManager.shared.isConnected {
+        if AIRECBleChannel.shared.isConnected {
             refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
             return
         }
 
         let scanVC = ScanPeripheralViewController()
-        scanVC.onConnected = { [weak self] in
-            guard let self = self else { return }
-            AIRECBleManager.shared.delegate = self
-        }
         navigationController?.pushViewController(scanVC, animated: true)
     }
 }

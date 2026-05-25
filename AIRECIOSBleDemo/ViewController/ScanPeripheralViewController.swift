@@ -11,6 +11,8 @@ import SnapKit
 
 class ScanPeripheralViewController: UIViewController {
     
+   
+    
     var onConnected: (() -> Void)?
 
     let refreshIcon = UIActivityIndicatorView(style: .medium)
@@ -18,34 +20,39 @@ class ScanPeripheralViewController: UIViewController {
 
     private var devices: [AIRECBleDevice] = []
     private var seenIds = Set<String>()
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        AIRECBleChannel.shared.stopScan()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    private lazy var radarContainer: ScanContainerView = {
-        let radarContainer = ScanContainerView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 220))
-        radarContainer.stopButton.addTarget(self, action: #selector(stopScan), for: .touchUpInside)
-        return radarContainer
-    }()
+        view.backgroundColor = .systemGroupedBackground
 
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
-        tableView.register(EmptyAIRECDeviceCell.self, forCellReuseIdentifier: EmptyAIRECDeviceCell.reuseId)
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .singleLine
-        tableView.tableHeaderView = radarContainer
-        return tableView
-    }()
+        // 使用系统导航栏标题
+        setupNav()
 
+        // 创建页面元素
+        setupView()
 
+        AIRECBleChannel.shared.addObserver(self)
+        AIRECBleChannel.shared.startScan()
+        
+        radarContainer.startScanningAnimation()
+    }
+
+    deinit {
+        AIRECBleChannel.shared.removeObserver(self)
+    }
+    
+    
     //设置导航栏
     func setupNav() {
         title = "连接设备"
-        // 设置导航栏左侧关闭按钮,图标使用close自定义图标
-        let closeButton = UIButton(type: .custom)
-        closeButton.setImage(UIImage(named: "close_icon"), for: .normal)
-        closeButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)   
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "questionmark.circle"),
             style: .plain,
@@ -63,42 +70,43 @@ class ScanPeripheralViewController: UIViewController {
         }
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .systemGroupedBackground
-
-        // 使用系统导航栏标题
-        setupNav()
-
-        // 创建页面元素
-        setupView()
-
-        AIRECBleManager.shared.delegate = self
-        AIRECBleManager.shared.startScan()
-        
-        radarContainer.startScanningAnimation()
-    }
 
     @objc func cancelTapped() {
-        AIRECBleManager.shared.stopScan()
+        AIRECBleChannel.shared.stopScan()
         self.navigationController?.popViewController(animated: true)
     }
     @objc func helpAction() {
         // 实现帮助按钮逻辑
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        AIRECBleManager.shared.stopScan()
-    }
+   
 
-    @objc func stopScan() {
-        radarContainer.scanView.stopAnimation()
-        radarContainer.stopButton.setTitle("已停止", for: .normal)
-        radarContainer.stopButton.isEnabled = false
-        // 这里可以加停止扫描的逻辑
+    private func stopScan() {
+        radarContainer.markScanStopped()
+        AIRECBleChannel.shared.stopScan()
     }
+    
+    // MARK: - UI Elements 懒加载
+    private lazy var radarContainer: ScanContainerView = {
+        let radarContainer = ScanContainerView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 220))
+        radarContainer.onStopTapped = { [weak self] in
+            self?.stopScan()
+        }
+        return radarContainer
+    }()
+
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
+        tableView.register(EmptyAIRECDeviceCell.self, forCellReuseIdentifier: EmptyAIRECDeviceCell.reuseId)
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .singleLine
+        tableView.tableHeaderView = radarContainer
+        return tableView
+    }()
+    
 }
 
 extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelegate {
@@ -121,8 +129,8 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
         cell.connectButtonTapped = { [weak self] in
             guard let self = self else { return }
             let device = self.devices[indexPath.row]
-            AIRECBleManager.shared.stopScan()
-            AIRECBleManager.shared.connect(device)
+            AIRECBleChannel.shared.stopScan()
+            AIRECBleChannel.shared.connect(device)
         }
         return cell
     }
@@ -132,43 +140,14 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
         guard !devices.isEmpty else { return }
 
         let device = devices[indexPath.row]
-        AIRECBleManager.shared.stopScan()
-        AIRECBleManager.shared.connect(device)
+        AIRECBleChannel.shared.stopScan()
+        AIRECBleChannel.shared.connect(device)
         
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         //显示目前扫描到的设备数量
         return "附近设备（\(devices.count)）"
-    }
-}
-
-private class EmptyAIRECDeviceCell: UITableViewCell {
-
-    static let reuseId = "EmptyAIRECDeviceCell"
-
-    private let emptyLabel = UILabel()
-
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupUI()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupUI()
-    }
-
-    private func setupUI() {
-        selectionStyle = .none
-        emptyLabel.text = "暂无可用AIREC设备"
-        emptyLabel.font = .systemFont(ofSize: 16)
-        emptyLabel.textColor = .secondaryLabel
-        emptyLabel.textAlignment = .center
-        contentView.addSubview(emptyLabel)
-        emptyLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(16)
-        }
     }
 }
 
@@ -183,27 +162,22 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
     }
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
-        radarContainer.scanView.stopAnimation()
+        radarContainer.stopScanningAnimation()
         DispatchQueue.main.async {
             self.onConnected?()
-            if let delegate = AIRECBleManager.shared.delegate, delegate !== self {
-                delegate.bleManager(manager, didConnect: device)
-            }
-            
             self.navigationController?.popViewController(animated: true)
-            
         }
     }
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
-        radarContainer.scanView.stopAnimation()
+        radarContainer.stopScanningAnimation()
         let msg = reason.contains("超时") ? "连接超时，请靠近设备重试" : "连接失败，请重试"
         showAlert(title: "连接失败", message: msg)
     }
 
     func bleManager(_ manager: AIRECBleManager, didChangeBluetoothState enabled: Bool) {
         if !enabled {
-            radarContainer.scanView.stopAnimation()
+            radarContainer.stopScanningAnimation()
             // statusLabel.text = "蓝牙已关闭，请开启蓝牙"
         }
     }

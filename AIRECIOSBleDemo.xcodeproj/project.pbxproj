@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67CD6B4C2F9F414500F8579D /* ATWOpusConverter.swift */; };
-		946823DA2FBC2F72002F0C5F /* ScanRadarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823D92FBC2F72002F0C5F /* ScanRadarView.swift */; };
+		946823DA2FBC2F72002F0C5F /* ScanRippleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823D92FBC2F72002F0C5F /* ScanRippleView.swift */; };
 		946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */; };
 		946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C52FBC6645002F0C5F /* ScanContainerView.swift */; };
 		946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C92FBED57E002F0C5F /* HomeViewViewController.swift */; };
@@ -22,6 +22,8 @@
 		A010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F010 /* Assets.xcassets */; };
 		A012 /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* FileCell.swift */; };
 		A013 /* BlueToothDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* BlueToothDeviceInfoCell.swift */; };
+		A015 /* EmptyAIRECDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* EmptyAIRECDeviceCell.swift */; };
+		A016 /* AIRECBleChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F016 /* AIRECBleChannel.swift */; };
 		A014 /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* AudioItem.swift */; };
 		A93DC07B3CB3B813052783FC /* Pods_AIRECIOSBleDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C748ED250346865DE6EB81C /* Pods_AIRECIOSBleDemo.framework */; };
 		AKIT1 /* AIRECBleKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FKIT /* AIRECBleKit.framework */; };
@@ -49,7 +51,7 @@
 		1F2544FB182C6289B4ED49F7 /* Pods-AIRECIOSBleDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AIRECIOSBleDemo.debug.xcconfig"; path = "Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		5E849E8598F6BFC85763C319 /* Pods-AIRECIOSBleDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AIRECIOSBleDemo.release.xcconfig"; path = "Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo.release.xcconfig"; sourceTree = "<group>"; };
 		67CD6B4C2F9F414500F8579D /* ATWOpusConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATWOpusConverter.swift; sourceTree = "<group>"; };
-		946823D92FBC2F72002F0C5F /* ScanRadarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanRadarView.swift; sourceTree = "<group>"; };
+		946823D92FBC2F72002F0C5F /* ScanRippleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanRippleView.swift; sourceTree = "<group>"; };
 		946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPeripheralViewController.swift; sourceTree = "<group>"; };
 		946824C52FBC6645002F0C5F /* ScanContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanContainerView.swift; sourceTree = "<group>"; };
 		946824C92FBED57E002F0C5F /* HomeViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewController.swift; sourceTree = "<group>"; };
@@ -64,6 +66,8 @@
 		F011 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F012 /* FileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
 		F013 /* BlueToothDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueToothDeviceInfoCell.swift; sourceTree = "<group>"; };
+		F015 /* EmptyAIRECDeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyAIRECDeviceCell.swift; sourceTree = "<group>"; };
+		F016 /* AIRECBleChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRECBleChannel.swift; sourceTree = "<group>"; };
 		F014 /* AudioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioItem.swift; sourceTree = "<group>"; };
 		FAPP /* AIRECIOSBleDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIRECIOSBleDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FINF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -99,9 +103,10 @@
 		946824C72FBD6472002F0C5F /* View */ = {
 			isa = PBXGroup;
 			children = (
-				946823D92FBC2F72002F0C5F /* ScanRadarView.swift */,
+				946823D92FBC2F72002F0C5F /* ScanRippleView.swift */,
 				946824C52FBC6645002F0C5F /* ScanContainerView.swift */,
 				F013 /* BlueToothDeviceInfoCell.swift */,
+				F015 /* EmptyAIRECDeviceCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -127,6 +132,7 @@
 		946824CC2FC02EC6002F0C5F /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				F016 /* AIRECBleChannel.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -315,8 +321,10 @@
 				A006 /* MainViewController.swift in Sources */,
 				A007 /* PlayerViewController.swift in Sources */,
 				A012 /* FileCell.swift in Sources */,
-				946823DA2FBC2F72002F0C5F /* ScanRadarView.swift in Sources */,
+				946823DA2FBC2F72002F0C5F /* ScanRippleView.swift in Sources */,
 				A013 /* BlueToothDeviceInfoCell.swift in Sources */,
+				A015 /* EmptyAIRECDeviceCell.swift in Sources */,
+				A016 /* AIRECBleChannel.swift in Sources */,
 				AOPUS1 /* OpusDecoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,5 @@
 //
-//  RadarContainerView.swift
+//  ScanContainerView.swift
 //  AIRECIOSBleDemo
 //
 //  Created by 李龙飞 on 2026/5/19.
@@ -11,10 +11,12 @@ import SnapKit
 
 class ScanContainerView: UIView {
     
-    let scanView = ScanRadarView()
-    let scanTitleLabel = UILabel()
-    let descLabel = UILabel()
-    let stopButton = UIButton(type: .system)
+    var onStopTapped: (() -> Void)?
+
+    private let scanView = ScanRippleView()
+    private let scanTitleLabel = UILabel()
+    private let descLabel = UILabel()
+    private let stopButton = UIButton(type: .system)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,6 +66,7 @@ class ScanContainerView: UIView {
         stopButton.backgroundColor = UIColor.systemGray6
         stopButton.layer.cornerRadius = 18
         stopButton.titleLabel?.font = .systemFont(ofSize: 16)
+        stopButton.addTarget(self, action: #selector(stopButtonTapped), for: .touchUpInside)
         addSubview(stopButton)
         stopButton.snp.makeConstraints { make in
             make.left.equalTo(scanView.snp.right).offset(16)
@@ -73,6 +76,10 @@ class ScanContainerView: UIView {
         }
     }
 
+    @objc private func stopButtonTapped() {
+        onStopTapped?()
+    }
+
     //开始扫描开始动画
     func startScanningAnimation() {
         scanView.startAnimation()
@@ -80,5 +87,11 @@ class ScanContainerView: UIView {
     //结束扫描停止动画
     func stopScanningAnimation() {
         scanView.stopAnimation()
+    }
+
+    func markScanStopped() {
+        stopScanningAnimation()
+        stopButton.setTitle("已停止", for: .normal)
+        stopButton.isEnabled = false
     }
 }
