@@ -8,9 +8,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: windowScene)
-        let nav = UINavigationController(rootViewController: HomeViewViewController())
-        nav.navigationBar.prefersLargeTitles = false
-        window.rootViewController = nav
+        window.rootViewController = AppTabBarController()
         self.window = window
         window.makeKeyAndVisible()
     }

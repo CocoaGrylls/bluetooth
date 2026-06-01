@@ -6,9 +6,17 @@ typealias AIRECBleChannelObserver = AIRECBleDelegate
 final class AIRECBleChannel: NSObject {
 
     static let shared = AIRECBleChannel()
+    private static let lastConnectedDeviceIdentifierKey = "AIRECBleChannel.lastConnectedDeviceIdentifier"
+    private static let autoConnectTimeout: TimeInterval = 20
 
     private let manager = AIRECBleManager.shared
     private var observers: [WeakObserver] = []
+    private var autoConnectScanActive = false
+    private var autoConnectTimer: Timer?
+
+    var lastConnectedDeviceIdentifier: String? {
+        UserDefaults.standard.string(forKey: Self.lastConnectedDeviceIdentifierKey)
+    }
 
     private override init() {
         super.init()
@@ -57,6 +65,16 @@ final class AIRECBleChannel: NSObject {
         observers.removeAll { $0.value == nil }
     }
 
+    private func saveLastConnectedDeviceIdentifier(_ identifier: String) {
+        UserDefaults.standard.set(identifier, forKey: Self.lastConnectedDeviceIdentifierKey)
+    }
+
+    private func cancelAutoConnectScan() {
+        autoConnectScanActive = false
+        autoConnectTimer?.invalidate()
+        autoConnectTimer = nil
+    }
+
     private func runOnMain(_ block: @escaping () -> Void) {
         if Thread.isMainThread {
             block()
@@ -96,25 +114,48 @@ extension AIRECBleChannel {
         manager.setup()
     }
 
+    func startAutoConnectScanIfNeeded() {
+        runOnMain { [weak self] in
+            guard let self = self else { return }
+            guard !self.manager.isConnected else { return }
+            guard self.lastConnectedDeviceIdentifier?.isEmpty == false else { return }
+
+            self.activate()
+            self.cancelAutoConnectScan()
+            self.autoConnectScanActive = true
+            self.manager.startScan()
+            self.autoConnectTimer = Timer.scheduledTimer(withTimeInterval: Self.autoConnectTimeout, repeats: false) { [weak self] _ in
+                guard let self = self else { return }
+                guard self.autoConnectScanActive, !self.manager.isConnected else { return }
+                self.cancelAutoConnectScan()
+                self.manager.stopScan()
+            }
+        }
+    }
+
     func getConnectedDevice() -> AIRECBleDevice? {
         manager.getConnectedDevice()
     }
 
     func startScan() {
         activate()
+        cancelAutoConnectScan()
         manager.startScan()
     }
 
     func stopScan() {
+        cancelAutoConnectScan()
         manager.stopScan()
     }
 
     func connect(_ device: AIRECBleDevice) {
         activate()
+        cancelAutoConnectScan()
         manager.connect(device)
     }
 
     func disconnect() {
+        cancelAutoConnectScan()
         manager.disconnect()
     }
 
@@ -230,14 +271,22 @@ extension AIRECBleChannel {
 extension AIRECBleChannel: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didDiscover device: AIRECBleDevice) {
+        if autoConnectScanActive, device.identifier == lastConnectedDeviceIdentifier {
+            cancelAutoConnectScan()
+            manager.stopScan()
+            manager.connect(device)
+        }
         notify { $0.bleManager(manager, didDiscover: device) }
     }
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
+        cancelAutoConnectScan()
+        saveLastConnectedDeviceIdentifier(device.identifier)
         notify { $0.bleManager(manager, didConnect: device) }
     }
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
+        cancelAutoConnectScan()
         notify { $0.bleManager(manager, didDisconnect: device, reason: reason) }
     }
 
@@ -250,6 +299,11 @@ extension AIRECBleChannel: AIRECBleDelegate {
     }
 
     func bleManager(_ manager: AIRECBleManager, didChangeBluetoothState enabled: Bool) {
+        if enabled {
+            startAutoConnectScanIfNeeded()
+        } else {
+            cancelAutoConnectScan()
+        }
         notify { $0.bleManager(manager, didChangeBluetoothState: enabled) }
     }
 

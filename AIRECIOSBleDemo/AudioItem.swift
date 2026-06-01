@@ -96,6 +96,6 @@ final class AudioStore {
 enum AudioFilter: Int {
     case all = 0, device, local
     var title: String {
-        switch self { case .all: return "全部"; case .device: return "设备音频"; case .local: return "本地音频" }
+        switch self { case .all: return "全部"; case .device: return "录音卡文件"; case .local: return "手机文件" }
     }
 }
