@@ -21,6 +21,13 @@ class HomeViewViewController: UIViewController {
     private var latestDeviceFiles: [AIRECBleFile] = []
     private var currentFilter: AudioFilter = .local
     private var hasManuallySelectedFilter = false
+    private var isRecording = false
+    private var isRecordPaused = false
+    private var recordStartDate = Date()
+    private var pausedElapsed: TimeInterval = 0
+    private var recordTimer: Timer?
+    private var recordElapsedText = "00:00:00"
+    private var appInitiatedPauseResume = false
 
     private let audioExts: Set<String> = ["wav", "mp3", "aac", "m4a", "ogg", "opus", "flac", "pcm", "amr"]
 
@@ -29,18 +36,17 @@ class HomeViewViewController: UIViewController {
         self.title = "首页";
         setupView()
         AIRECBleChannel.shared.addObserver(self)
-        refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBar()
         AIRECBleChannel.shared.activate()
-        refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
     }
 
     deinit {
         AIRECBleChannel.shared.removeObserver(self)
+        stopRecordTimer()
     }
 
     private func setupView() {
@@ -55,6 +61,7 @@ class HomeViewViewController: UIViewController {
             tableView.sectionHeaderTopPadding = 0
         }
         tableView.register(HomeBluetoothDeviceInfoCell.self, forCellReuseIdentifier: HomeBluetoothDeviceInfoCell.reuseId)
+        tableView.register(HomeRecordingStatusCell.self, forCellReuseIdentifier: HomeRecordingStatusCell.reuseId)
         tableView.register(HomeRecordingFileCell.self, forCellReuseIdentifier: HomeRecordingFileCell.reuseId)
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
@@ -82,19 +89,105 @@ class HomeViewViewController: UIViewController {
         navigationBar.isTranslucent = false
     }
 
-    private func refreshBluetoothInfoView(shouldFetchDeviceInfo: Bool = false) {
-        let channel = AIRECBleChannel.shared
-        tableView.reloadSections(IndexSet(integer: 0), with: .none)
+    private func reloadBluetoothInfoRow(animated: Bool = false) {
+        let animation: UITableView.RowAnimation = animated ? .fade : .none
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: animation)
+    }
 
-        if shouldFetchDeviceInfo, channel.isConnected {
-            channel.fetchAllDeviceInfo()
-            channel.fetchFileList()
+    private func fetchConnectedDeviceSnapshot() {
+        let channel = AIRECBleChannel.shared
+        guard channel.isConnected else { return }
+        channel.fetchAllDeviceInfo()
+        channel.fetchFileList()
+    }
+
+    private func reloadRecordingStatusRow(animated: Bool = true) {
+        reloadBluetoothInfoRow(animated: animated)
+    }
+
+    private func startRecordTimer(reset: Bool) {
+        if reset {
+            recordStartDate = Date()
+            pausedElapsed = 0
+            recordElapsedText = "00:00:00"
+        }
+        recordTimer?.invalidate()
+        recordTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(recordTimerTick), userInfo: nil, repeats: true)
+        RunLoop.main.add(recordTimer!, forMode: .common)
+        recordTimerTick()
+    }
+
+    private func resumeRecordTimer() {
+        recordStartDate = Date()
+        startRecordTimer(reset: false)
+    }
+
+    private func pauseRecordTimer() {
+        pausedElapsed += Date().timeIntervalSince(recordStartDate)
+        recordTimer?.invalidate()
+        recordTimer = nil
+        recordTimerTick()
+    }
+
+    private func stopRecordTimer() {
+        recordTimer?.invalidate()
+        recordTimer = nil
+        pausedElapsed = 0
+        recordElapsedText = "00:00:00"
+    }
+
+    @objc private func recordTimerTick() {
+        let total: Int
+        if isRecordPaused {
+            total = Int(pausedElapsed)
+        } else {
+            total = Int(pausedElapsed + Date().timeIntervalSince(recordStartDate))
+        }
+        recordElapsedText = String(format: "%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60)
+        if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? HomeRecordingStatusCell {
+            cell.configure(device: AIRECBleChannel.shared.getConnectedDevice(), elapsedText: recordElapsedText, isPaused: isRecordPaused)
+        }
+    }
+
+    private func syncRecordingState(recording: Bool, paused: Bool, resetTimerWhenStarting: Bool) {
+        let wasRecording = isRecording
+        let wasPaused = isRecordPaused
+        isRecording = recording
+        isRecordPaused = paused
+
+        if recording {
+            if !wasRecording {
+                if paused {
+                    if resetTimerWhenStarting {
+                        recordStartDate = Date()
+                        pausedElapsed = 0
+                        recordElapsedText = "00:00:00"
+                    }
+                    recordTimer?.invalidate()
+                    recordTimer = nil
+                    recordTimerTick()
+                } else {
+                    startRecordTimer(reset: resetTimerWhenStarting)
+                }
+            } else if wasPaused && !paused {
+                resumeRecordTimer()
+            } else if !wasPaused && paused {
+                pauseRecordTimer()
+            }
+        } else {
+            stopRecordTimer()
+        }
+
+        if wasRecording != recording {
+            reloadRecordingStatusRow()
+        } else {
+            recordTimerTick()
         }
     }
 
     @objc private func connectButtonTapped() {
         if AIRECBleChannel.shared.isConnected {
-            refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
+            fetchConnectedDeviceSnapshot()
             return
         }
 
@@ -122,6 +215,7 @@ class HomeViewViewController: UIViewController {
             LocalAudioRecord(
                 id: record.id,
                 fileName: record.fileName,
+                displayName: record.displayName,
                 fileSize: record.fileSize,
                 createTime: record.createTime,
                 localPath: record.resolvedLocalPath,
@@ -188,14 +282,16 @@ class HomeViewViewController: UIViewController {
             let ext = String(fileName[fileName.index(after: dotIndex)...])
             return audioExts.contains(ext)
         }.filter { file in
-            guard !seen.contains(file.fileName) else { return false }
-            seen.insert(file.fileName)
+            let id = LocalAudioRecord.makeID(fileName: file.fileName, createTime: file.createTime)
+            guard !seen.contains(id) else { return false }
+            seen.insert(id)
             return true
         }
         latestDeviceFiles = filteredFiles
 
         durationTexts = filteredFiles.reduce(into: durationTexts) { result, file in
-            result[file.fileName] = file.durationStr
+            let id = LocalAudioRecord.makeID(fileName: file.fileName, createTime: file.createTime)
+            result[id] = file.durationStr
         }
 
         deviceItems = filteredFiles.map { file in
@@ -348,41 +444,81 @@ class HomeViewViewController: UIViewController {
 extension HomeViewViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
-        refreshBluetoothInfoView(shouldFetchDeviceInfo: true)
+        fetchConnectedDeviceSnapshot()
     }
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
+        let wasShowingRecordingStatus = isRecording
         latestDeviceFiles.removeAll()
         deviceItems.removeAll()
+        syncRecordingState(recording: false, paused: false, resetTimerWhenStarting: true)
         if !hasManuallySelectedFilter {
             currentFilter = .local
         }
-        refreshBluetoothInfoView()
+        if !wasShowingRecordingStatus {
+            reloadBluetoothInfoRow()
+        }
         reloadLocalFiles()
     }
 
     func bleManager(_ manager: AIRECBleManager, didUpdateDeviceInfo device: AIRECBleDevice) {
-        refreshBluetoothInfoView()
+        reloadBluetoothInfoRow()
     }
 
     func bleManager(_ manager: AIRECBleManager, didReceiveFirmwareVersion version: String) {
-        refreshBluetoothInfoView()
+        reloadBluetoothInfoRow()
     }
 
     func bleManager(_ manager: AIRECBleManager, didChangeBluetoothState enabled: Bool) {
         if !enabled {
+            let wasShowingRecordingStatus = isRecording
             latestDeviceFiles.removeAll()
             deviceItems.removeAll()
+            syncRecordingState(recording: false, paused: false, resetTimerWhenStarting: true)
             if !hasManuallySelectedFilter {
                 currentFilter = .local
             }
-            refreshBluetoothInfoView()
+            if !wasShowingRecordingStatus {
+                reloadBluetoothInfoRow()
+            }
             reloadLocalFiles()
         }
     }
 
     func bleManager(_ manager: AIRECBleManager, didUpdateFileList files: [AIRECBleFile]) {
         reloadDeviceFiles(files)
+    }
+
+    func bleManager(_ manager: AIRECBleManager, didChangeRecordState recording: Bool, fileName: String) {
+        syncRecordingState(recording: recording, paused: false, resetTimerWhenStarting: true)
+        showToast(recording ? "录音中" : "录音已保存")
+        if !recording {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                guard AIRECBleChannel.shared.isConnected else { return }
+                AIRECBleChannel.shared.fetchDeviceInfo()
+                AIRECBleChannel.shared.fetchFileList()
+            }
+        }
+    }
+
+    func bleManagerDidPauseRecord(_ manager: AIRECBleManager) {
+        guard isRecording else { return }
+        if appInitiatedPauseResume {
+            appInitiatedPauseResume = false
+            return
+        }
+        syncRecordingState(recording: true, paused: !isRecordPaused, resetTimerWhenStarting: false)
+    }
+
+    func bleManager(_ manager: AIRECBleManager, didQueryRecordStatus recording: Bool, paused: Bool, fileName: String) {
+        syncRecordingState(recording: recording, paused: paused, resetTimerWhenStarting: true)
+    }
+
+    func bleManager(_ manager: AIRECBleManager, didUpdateRecordDuration durationSec: Int64) {
+        recordStartDate = Date().addingTimeInterval(-TimeInterval(durationSec))
+        pausedElapsed = 0
+        recordElapsedText = String(format: "%02d:%02d:%02d", durationSec / 3600, (durationSec % 3600) / 60, durationSec % 60)
+        recordTimerTick()
     }
 
     func bleManager(_ manager: AIRECBleManager, didDeleteFile fileName: String, success: Bool) {
@@ -393,16 +529,18 @@ extension HomeViewViewController: AIRECBleDelegate {
     }
 
     func bleManager(_ manager: AIRECBleManager, downloadProgress file: AIRECBleFile, progress: Int) {
-        fileStates[file.fileName] = .downloading(progress)
-        reloadCell(id: file.fileName)
+        let id = LocalAudioRecord.makeID(fileName: file.fileName, createTime: file.createTime)
+        fileStates[id] = .downloading(progress)
+        reloadCell(id: id)
     }
 
     func bleManager(_ manager: AIRECBleManager, downloadComplete file: AIRECBleFile, localPath: String) {
-        fileStates[file.fileName] = nil
-        durationTexts[file.fileName] = file.durationStr
+        let id = LocalAudioRecord.makeID(fileName: file.fileName, createTime: file.createTime)
+        fileStates[id] = nil
+        durationTexts[id] = file.durationStr
         guard let stablePath = persistDownloadedFile(fileName: file.fileName, localPath: localPath) else {
-            fileStates[file.fileName] = .error
-            reloadCell(id: file.fileName)
+            fileStates[id] = .error
+            reloadCell(id: id)
             showToast("保存文件失败，请重新下载")
             return
         }
@@ -421,7 +559,7 @@ extension HomeViewViewController: AIRECBleDelegate {
             localPath: stablePath,
             isDevice: false
         )
-        if let index = localItems.firstIndex(where: { $0.id == file.fileName }) {
+        if let index = localItems.firstIndex(where: { $0.id == id }) {
             localItems[index] = savedRecord
         } else {
             localItems.append(savedRecord)
@@ -436,7 +574,8 @@ extension HomeViewViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, downloadFailed file: AIRECBleFile, reason: String) {
         print("AIREC_iOS: download failed file=\(file.fileName), reason=\(reason)")
-        fileStates[file.fileName] = .error
+        let id = LocalAudioRecord.makeID(fileName: file.fileName, createTime: file.createTime)
+        fileStates[id] = .error
         let downloadingIds = fileStates.compactMap { id, state -> String? in
             if case .downloading = state { return id }
             return nil
@@ -461,6 +600,13 @@ extension HomeViewViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
+            if isRecording {
+                let cell = tableView.dequeueReusableCell(withIdentifier: HomeRecordingStatusCell.reuseId, for: indexPath) as! HomeRecordingStatusCell
+                cell.configure(device: AIRECBleChannel.shared.getConnectedDevice(), elapsedText: recordElapsedText, isPaused: isRecordPaused)
+                cell.delegate = self
+                return cell
+            }
+
             let cell = tableView.dequeueReusableCell(withIdentifier: HomeBluetoothDeviceInfoCell.reuseId, for: indexPath) as! HomeBluetoothDeviceInfoCell
             let device = AIRECBleChannel.shared.isConnected ? AIRECBleChannel.shared.getConnectedDevice() : nil
             cell.configure(device: device)
@@ -472,13 +618,16 @@ extension HomeViewViewController: UITableViewDataSource, UITableViewDelegate {
         let record = displayItems[indexPath.row]
         let item = audioItem(from: record)
         let state: HomeRecordingFileCell.State = currentFilter == .local ? .done : (fileStates[record.id] ?? .idle)
-        cell.configure(item: item, durationText: durationTexts[item.id], state: state)
+        cell.configure(item: item, displayName: record.displayName, durationText: durationTexts[record.id] ?? durationTexts[item.id], state: state)
         cell.delegate = self
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        indexPath.section == 0 ? 214 : 130
+        if indexPath.section == 0 {
+            return isRecording ? 250 : 214
+        }
+        return 130
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -502,6 +651,39 @@ extension HomeViewViewController: HomeBluetoothDeviceInfoCellDelegate {
 
     func homeBluetoothDeviceInfoCellDidTapConnect(_ cell: HomeBluetoothDeviceInfoCell) {
         connectButtonTapped()
+    }
+}
+
+extension HomeViewViewController: HomeRecordingStatusCellDelegate {
+
+    func homeRecordingStatusCellDidTapPause(_ cell: HomeRecordingStatusCell) {
+        guard AIRECBleChannel.shared.isConnected else {
+            showToast("请先连接设备")
+            return
+        }
+
+        if isRecordPaused {
+            appInitiatedPauseResume = true
+            AIRECBleChannel.shared.resumeRecord()
+            syncRecordingState(recording: true, paused: false, resetTimerWhenStarting: false)
+        } else {
+            appInitiatedPauseResume = true
+            AIRECBleChannel.shared.pauseRecord()
+            syncRecordingState(recording: true, paused: true, resetTimerWhenStarting: false)
+        }
+    }
+
+    func homeRecordingStatusCellDidTapStop(_ cell: HomeRecordingStatusCell) {
+        guard AIRECBleChannel.shared.isConnected else {
+            showToast("请先连接设备")
+            return
+        }
+
+        AIRECBleChannel.shared.endRecord()
+    }
+
+    func homeRecordingStatusCellDidTapPlay(_ cell: HomeRecordingStatusCell) {
+        showToast("录音保存后可播放")
     }
 }
 
@@ -557,13 +739,13 @@ extension HomeViewViewController: HomeRecordingFileCellDelegate {
             return
         }
 
-        let player = PlayerViewController(filePath: localPath, fileName: item.fileName, fileSize: item.fileSizeStr)
+        let player = PlayerViewController(filePath: localPath, fileName: record.displayName, fileSize: item.fileSizeStr)
         navigationController?.pushViewController(player, animated: true)
     }
 
     func homeRecordingFileCellDidTapMore(_ cell: HomeRecordingFileCell) {
         guard let record = record(for: cell) else { return }
-        let alert = UIAlertController(title: record.fileName, message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: record.displayName, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "删除", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             if self.currentFilter == .device, record.isDevice {

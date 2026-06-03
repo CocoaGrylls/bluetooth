@@ -136,9 +136,9 @@ final class HomeRecordingFileCell: UITableViewCell {
 
     // MARK: - Configuration
 
-    func configure(item: AudioItem, durationText: String?, state: State) {
+    func configure(item: AudioItem, displayName: String, durationText: String?, state: State) {
         accentColor = Self.accentColor(for: item.fileName)
-        nameLabel.text = item.fileName
+        nameLabel.text = displayName
         infoLabel.text = makeInfoText(item)
         durationLabel.text = durationText?.isEmpty == false ? durationText : "--:--"
         waveformView.configure(accentColor: accentColor, seed: item.fileName)

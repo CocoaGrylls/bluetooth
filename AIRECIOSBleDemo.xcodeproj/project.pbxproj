@@ -18,6 +18,8 @@
 		946824D22FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D12FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift */; };
 		946824D42FD71701002F0C5F /* AppTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D32FD71701002F0C5F /* AppTabBarController.swift */; };
 		946824D62FD71702002F0C5F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D52FD71702002F0C5F /* SettingsViewController.swift */; };
+		946824D82FD8F001002F0C5F /* HomeRecordingStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D72FD8F001002F0C5F /* HomeRecordingStatusCell.swift */; };
+		946824DA2FD8F1A1002F0C5F /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D92FD8F1A1002F0C5F /* UIColor+Hex.swift */; };
 		A005 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* ScanViewController.swift */; };
 		A006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* MainViewController.swift */; };
 		A007 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* PlayerViewController.swift */; };
@@ -26,9 +28,9 @@
 		A010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F010 /* Assets.xcassets */; };
 		A012 /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* FileCell.swift */; };
 		A013 /* BlueToothDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* BlueToothDeviceInfoCell.swift */; };
+		A014 /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* AudioItem.swift */; };
 		A015 /* EmptyAIRECDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* EmptyAIRECDeviceCell.swift */; };
 		A016 /* AIRECBleChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F016 /* AIRECBleChannel.swift */; };
-		A014 /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* AudioItem.swift */; };
 		A017 /* LocalAudioRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F017 /* LocalAudioRecord.swift */; };
 		A018 /* LocalAudioRecordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F018 /* LocalAudioRecordManager.swift */; };
 		A93DC07B3CB3B813052783FC /* Pods_AIRECIOSBleDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C748ED250346865DE6EB81C /* Pods_AIRECIOSBleDemo.framework */; };
@@ -67,6 +69,8 @@
 		946824D12FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBluetoothDeviceInfoCell.swift; sourceTree = "<group>"; };
 		946824D32FD71701002F0C5F /* AppTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabBarController.swift; sourceTree = "<group>"; };
 		946824D52FD71702002F0C5F /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		946824D72FD8F001002F0C5F /* HomeRecordingStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecordingStatusCell.swift; sourceTree = "<group>"; };
+		946824D92FD8F1A1002F0C5F /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		F005 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
 		F006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F007 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
@@ -76,9 +80,9 @@
 		F011 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F012 /* FileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
 		F013 /* BlueToothDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueToothDeviceInfoCell.swift; sourceTree = "<group>"; };
+		F014 /* AudioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioItem.swift; sourceTree = "<group>"; };
 		F015 /* EmptyAIRECDeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyAIRECDeviceCell.swift; sourceTree = "<group>"; };
 		F016 /* AIRECBleChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRECBleChannel.swift; sourceTree = "<group>"; };
-		F014 /* AudioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioItem.swift; sourceTree = "<group>"; };
 		F017 /* LocalAudioRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioRecord.swift; sourceTree = "<group>"; };
 		F018 /* LocalAudioRecordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioRecordManager.swift; sourceTree = "<group>"; };
 		FAPP /* AIRECIOSBleDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIRECIOSBleDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,6 +123,7 @@
 				946824C52FBC6645002F0C5F /* ScanContainerView.swift */,
 				946824D12FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift */,
 				946824CF2FC4F8E1002F0C5F /* HomeRecordingFileCell.swift */,
+				946824D72FD8F001002F0C5F /* HomeRecordingStatusCell.swift */,
 				F013 /* BlueToothDeviceInfoCell.swift */,
 				F015 /* EmptyAIRECDeviceCell.swift */,
 			);
@@ -141,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				946824CD2FC00001002F0C5F /* Theme.swift */,
+				946824D92FD8F1A1002F0C5F /* UIColor+Hex.swift */,
 			);
 			path = AppTheme;
 			sourceTree = "<group>";
@@ -284,13 +290,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -333,8 +335,10 @@
 				946824CE2FC00001002F0C5F /* Theme.swift in Sources */,
 				946824D22FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift in Sources */,
 				946824D02FC4F8E1002F0C5F /* HomeRecordingFileCell.swift in Sources */,
+				946824D82FD8F001002F0C5F /* HomeRecordingStatusCell.swift in Sources */,
 				946824D42FD71701002F0C5F /* AppTabBarController.swift in Sources */,
 				946824D62FD71702002F0C5F /* SettingsViewController.swift in Sources */,
+				946824DA2FD8F1A1002F0C5F /* UIColor+Hex.swift in Sources */,
 				946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */,
 				67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */,
 				A009 /* SceneDelegate.swift in Sources */,
@@ -371,7 +375,10 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = NO;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/AIRECIOSBleDemo/opus_include";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/AIRECIOSBleDemo/opus_include",
+				);
 				INFOPLIST_FILE = AIRECIOSBleDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -384,6 +391,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-force_load",
 					"$(SRCROOT)/AIRECIOSBleDemo/libopus.a",
 					"-lsqlite3",
@@ -413,7 +421,10 @@
 					"$(PROJECT_DIR)",
 				);
 				GENERATE_INFOPLIST_FILE = NO;
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/AIRECIOSBleDemo/opus_include";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/AIRECIOSBleDemo/opus_include",
+				);
 				INFOPLIST_FILE = AIRECIOSBleDemo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -426,6 +437,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-force_load",
 					"$(SRCROOT)/AIRECIOSBleDemo/libopus.a",
 					"-lsqlite3",
