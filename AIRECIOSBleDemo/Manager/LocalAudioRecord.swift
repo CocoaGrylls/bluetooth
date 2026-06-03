@@ -5,6 +5,7 @@ import AIRECBleKit
 final class LocalAudioRecord: Identifiable {
     let id: String
     let fileName: String
+    let displayName: String
     let fileSize: Int64
     let createTime: String
     let localPath: String
@@ -14,14 +15,16 @@ final class LocalAudioRecord: Identifiable {
     init(
         id: String? = nil,
         fileName: String,
+        displayName: String? = nil,
         fileSize: Int64,
         createTime: String,
         localPath: String,
         isDevice: Bool,
         updatedAt: Int64 = Int64(Date().timeIntervalSince1970)
     ) {
-        self.id = id ?? fileName
+        self.id = id ?? Self.makeID(fileName: fileName, createTime: createTime)
         self.fileName = fileName
+        self.displayName = displayName ?? fileName
         self.fileSize = fileSize
         self.createTime = createTime
         self.localPath = localPath
@@ -56,5 +59,9 @@ final class LocalAudioRecord: Identifiable {
         var item = AudioItem(fileName: fileName, fileSize: fileSize, createTime: createTime, localPath: resolvedLocalPath)
         item.isDevice = isDevice
         return item
+    }
+
+    static func makeID(fileName: String, createTime: String) -> String {
+        "\(fileName)|\(createTime)"
     }
 }

@@ -1,12 +1,13 @@
 import Foundation
 import AIRECBleKit
+import GRDB
 
 // MARK: - 数据库本地音频管理
 final class LocalAudioRecordManager {
     static let shared = LocalAudioRecordManager()
 
     private let dbFileName = "airec_local_audio.sqlite"
-    private let queue = DispatchQueue(label: "com.airec.local-audio-record-manager")
+    private let dbQueue: DatabaseQueue
 
     private var dbPath: String {
         documentsDirectoryURL.appendingPathComponent(dbFileName).path
@@ -17,6 +18,10 @@ final class LocalAudioRecordManager {
     }
 
     private init() {
+        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let databasePath = documentsURL.appendingPathComponent(dbFileName).path
+        try? FileManager.default.createDirectory(at: documentsURL, withIntermediateDirectories: true)
+        dbQueue = try! DatabaseQueue(path: databasePath)
         createDatabaseIfNeeded()
     }
 
@@ -28,104 +33,100 @@ final class LocalAudioRecordManager {
     }
 
     func save(_ record: LocalAudioRecord) {
-        queue.sync {
-            withDatabase { db in
-                let sql = """
-                INSERT INTO local_audio_records (id, file_name, file_size, create_time, local_path, is_device, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(id) DO UPDATE SET
-                    file_name = excluded.file_name,
-                    file_size = excluded.file_size,
-                    create_time = excluded.create_time,
-                    local_path = excluded.local_path,
-                    is_device = excluded.is_device,
-                    updated_at = excluded.updated_at;
-                """
-                var statement: OpaquePointer?
-                guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return }
-                defer { sqlite3_finalize(statement) }
-
-                bindText(statement, 1, record.id)
-                bindText(statement, 2, record.fileName)
-                sqlite3_bind_int64(statement, 3, record.fileSize)
-                bindText(statement, 4, record.createTime)
-                bindText(statement, 5, persistentLocalPath(for: record.localPath))
-                sqlite3_bind_int(statement, 6, record.isDevice ? 1 : 0)
-                sqlite3_bind_int64(statement, 7, Int64(Date().timeIntervalSince1970))
-                sqlite3_step(statement)
+        do {
+            try dbQueue.write { db in
+                try db.execute(
+                    sql: """
+                    INSERT INTO local_audio_records (id, file_name, display_name, file_size, create_time, local_path, is_device, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        file_name = excluded.file_name,
+                        display_name = excluded.display_name,
+                        file_size = excluded.file_size,
+                        create_time = excluded.create_time,
+                        local_path = excluded.local_path,
+                        is_device = excluded.is_device,
+                        updated_at = excluded.updated_at;
+                    """,
+                    arguments: [
+                        record.id,
+                        record.fileName,
+                        record.displayName,
+                        record.fileSize,
+                        record.createTime,
+                        persistentLocalPath(for: record.localPath),
+                        record.isDevice,
+                        Int64(Date().timeIntervalSince1970)
+                    ]
+                )
             }
+        } catch {
+            print("LocalAudioRecordManager save error: \(error)")
         }
     }
 
     func delete(fileName: String, removeFile: Bool = false) {
-        queue.sync {
+        do {
             if removeFile, let path = rawLocalPath(for: fileName) {
                 try? FileManager.default.removeItem(atPath: resolveLocalPath(path))
             }
 
-            withDatabase { db in
-                let sql = "DELETE FROM local_audio_records WHERE id = ?;"
-                var statement: OpaquePointer?
-                guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return }
-                defer { sqlite3_finalize(statement) }
-                bindText(statement, 1, fileName)
-                sqlite3_step(statement)
+            try dbQueue.write { db in
+                try db.execute(sql: "DELETE FROM local_audio_records WHERE id = ? OR file_name = ?;", arguments: [fileName, fileName])
             }
+        } catch {
+            print("LocalAudioRecordManager delete error: \(error)")
         }
     }
 
     func fetch(fileName: String, onlyExistingFile: Bool = true) -> LocalAudioRecord? {
-        queue.sync {
-            var record: LocalAudioRecord?
-            withDatabase { db in
-                let sql = """
-                SELECT id, file_name, file_size, create_time, local_path, is_device, updated_at
-                FROM local_audio_records
-                WHERE id = ?
-                LIMIT 1;
-                """
-                var statement: OpaquePointer?
-                guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return }
-                defer { sqlite3_finalize(statement) }
-
-                bindText(statement, 1, fileName)
-                if sqlite3_step(statement) == SQLITE_ROW {
-                    record = makeRecord(from: statement)
-                }
+        do {
+            let record = try dbQueue.read { db in
+                try Row.fetchOne(
+                    db,
+                    sql: """
+                    SELECT id, file_name, display_name, file_size, create_time, local_path, is_device, updated_at
+                    FROM local_audio_records
+                    WHERE id = ? OR file_name = ?
+                    LIMIT 1;
+                    """,
+                    arguments: [fileName, fileName]
+                ).map(makeRecord)
             }
 
             guard onlyExistingFile else { return record }
             guard let record, record.fileExists else {
-                deleteMissingRecord(fileName: fileName)
+                deleteMissingRecord(fileName: record?.id ?? fileName)
                 return nil
             }
             return record
+        } catch {
+            print("LocalAudioRecordManager fetch error: \(error)")
+            return nil
         }
     }
 
     func fetchAll(onlyExistingFiles: Bool = true) -> [LocalAudioRecord] {
-        queue.sync {
-            var records: [LocalAudioRecord] = []
-            withDatabase { db in
-                let sql = """
-                SELECT id, file_name, file_size, create_time, local_path, is_device, updated_at
-                FROM local_audio_records
-                ORDER BY create_time DESC, file_name DESC;
-                """
-                var statement: OpaquePointer?
-                guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return }
-                defer { sqlite3_finalize(statement) }
-
-                while sqlite3_step(statement) == SQLITE_ROW {
-                    records.append(makeRecord(from: statement))
-                }
+        do {
+            let records = try dbQueue.read { db in
+                try Row.fetchAll(
+                    db,
+                    sql: """
+                    SELECT id, file_name, display_name, file_size, create_time, local_path, is_device, updated_at
+                    FROM local_audio_records
+                    ORDER BY create_time DESC, file_name DESC;
+                    """
+                ).map(makeRecord)
             }
 
             guard onlyExistingFiles else { return records }
             let existingRecords = records.filter { $0.fileExists }
             let missingRecords = records.filter { !$0.fileExists }
-            missingRecords.forEach { deleteMissingRecord(fileName: $0.fileName) }
+            missingRecords.forEach { deleteMissingRecord(fileName: $0.id) }
             return existingRecords
+        } catch {
+            print("LocalAudioRecordManager fetchAll error: \(error)")
+            return []
         }
     }
 
@@ -133,60 +134,113 @@ final class LocalAudioRecordManager {
         fetch(fileName: fileName)?.resolvedLocalPath
     }
 
-    private func createDatabaseIfNeeded() {
-        try? FileManager.default.createDirectory(at: documentsDirectoryURL, withIntermediateDirectories: true)
+    func updateDisplayName(id: String, displayName: String) {
+        do {
+            try dbQueue.write { db in
+                try db.execute(
+                    sql: "UPDATE local_audio_records SET display_name = ?, updated_at = ? WHERE id = ?;",
+                    arguments: [displayName, Int64(Date().timeIntervalSince1970), id]
+                )
+            }
+        } catch {
+            print("LocalAudioRecordManager update display name error: \(error)")
+        }
+    }
 
-        withDatabase { db in
-            let sql = """
-            CREATE TABLE IF NOT EXISTS local_audio_records (
-                id TEXT PRIMARY KEY NOT NULL,
-                file_name TEXT NOT NULL,
-                file_size INTEGER NOT NULL,
-                create_time TEXT NOT NULL,
-                local_path TEXT NOT NULL,
-                is_device INTEGER NOT NULL DEFAULT 0,
-                updated_at INTEGER NOT NULL
-            );
-            """
-            sqlite3_exec(db, sql, nil, nil, nil)
+    private func createDatabaseIfNeeded() {
+        do {
+            try dbQueue.write { db in
+                try db.create(table: "local_audio_records", ifNotExists: true) { table in
+                    table.column("id", .text).notNull().primaryKey()
+                    table.column("file_name", .text).notNull()
+                    table.column("display_name", .text).notNull()
+                    table.column("file_size", .integer).notNull()
+                    table.column("create_time", .text).notNull()
+                    table.column("local_path", .text).notNull()
+                    table.column("is_device", .boolean).notNull().defaults(to: false)
+                    table.column("updated_at", .integer).notNull()
+                }
+                try addDisplayNameColumnIfNeeded(db)
+                try migrateLegacyIDsIfNeeded(db)
+            }
+        } catch {
+            print("LocalAudioRecordManager create database error: \(error)")
+        }
+    }
+
+    private func addDisplayNameColumnIfNeeded(_ db: Database) throws {
+        let columnRows = try Row.fetchAll(db, sql: "PRAGMA table_info(local_audio_records);")
+        let hasDisplayName = columnRows.contains { row in
+            let name: String = row["name"]
+            return name == "display_name"
+        }
+
+        guard !hasDisplayName else { return }
+        try db.execute(sql: "ALTER TABLE local_audio_records ADD COLUMN display_name TEXT;")
+        try db.execute(sql: "UPDATE local_audio_records SET display_name = file_name WHERE display_name IS NULL OR display_name = '';")
+    }
+
+    private func migrateLegacyIDsIfNeeded(_ db: Database) throws {
+        let rows = try Row.fetchAll(
+            db,
+            sql: "SELECT id, file_name, create_time FROM local_audio_records WHERE id = file_name;"
+        )
+
+        for row in rows {
+            let id: String = row["id"]
+            let fileName: String = row["file_name"]
+            let createTime: String = row["create_time"]
+            let newID = LocalAudioRecord.makeID(fileName: fileName, createTime: createTime)
+            guard id != newID else { continue }
+
+            try db.execute(
+                sql: """
+                UPDATE local_audio_records
+                SET id = ?
+                WHERE id = ?
+                  AND NOT EXISTS (SELECT 1 FROM local_audio_records WHERE id = ?);
+                """,
+                arguments: [newID, id, newID]
+            )
         }
     }
 
     private func deleteMissingRecord(fileName: String) {
-        withDatabase { db in
-            let sql = "DELETE FROM local_audio_records WHERE id = ?;"
-            var statement: OpaquePointer?
-            guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return }
-            defer { sqlite3_finalize(statement) }
-            bindText(statement, 1, fileName)
-            sqlite3_step(statement)
+        do {
+            try dbQueue.write { db in
+                try db.execute(sql: "DELETE FROM local_audio_records WHERE id = ?;", arguments: [fileName])
+            }
+        } catch {
+            print("LocalAudioRecordManager delete missing record error: \(error)")
         }
     }
 
     private func rawLocalPath(for fileName: String) -> String? {
-        var path: String?
-        withDatabase { db in
-            let sql = "SELECT local_path FROM local_audio_records WHERE id = ? LIMIT 1;"
-            var statement: OpaquePointer?
-            guard sqlite3_prepare_v2(db, sql, -1, &statement, nil) == SQLITE_OK else { return }
-            defer { sqlite3_finalize(statement) }
-            bindText(statement, 1, fileName)
-            if sqlite3_step(statement) == SQLITE_ROW {
-                path = textColumn(statement, 0)
+        do {
+            return try dbQueue.read { db in
+                try String.fetchOne(
+                    db,
+                    sql: "SELECT local_path FROM local_audio_records WHERE id = ? OR file_name = ? LIMIT 1;",
+                    arguments: [fileName, fileName]
+                )
             }
+        } catch {
+            print("LocalAudioRecordManager raw local path error: \(error)")
+            return nil
         }
-        return path
     }
 
-    private func makeRecord(from statement: OpaquePointer?) -> LocalAudioRecord {
-        LocalAudioRecord(
-            id: textColumn(statement, 0),
-            fileName: textColumn(statement, 1),
-            fileSize: sqlite3_column_int64(statement, 2),
-            createTime: textColumn(statement, 3),
-            localPath: textColumn(statement, 4),
-            isDevice: sqlite3_column_int(statement, 5) != 0,
-            updatedAt: sqlite3_column_int64(statement, 6)
+    private func makeRecord(from row: Row) -> LocalAudioRecord {
+        let displayName: String? = row["display_name"]
+        return LocalAudioRecord(
+            id: row["id"],
+            fileName: row["file_name"],
+            displayName: displayName,
+            fileSize: row["file_size"],
+            createTime: row["create_time"],
+            localPath: row["local_path"],
+            isDevice: row["is_device"],
+            updatedAt: row["updated_at"]
         )
     }
 
@@ -210,20 +264,4 @@ final class LocalAudioRecordManager {
             .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
-    private func withDatabase(_ work: (OpaquePointer) -> Void) {
-        var db: OpaquePointer?
-        guard sqlite3_open(dbPath, &db) == SQLITE_OK, let db else { return }
-        defer { sqlite3_close(db) }
-        work(db)
-    }
-
-    private func bindText(_ statement: OpaquePointer?, _ index: Int32, _ text: String) {
-        let destructor = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
-        sqlite3_bind_text(statement, index, text, -1, destructor)
-    }
-
-    private func textColumn(_ statement: OpaquePointer?, _ index: Int32) -> String {
-        guard let value = sqlite3_column_text(statement, index) else { return "" }
-        return String(cString: value)
-    }
 }

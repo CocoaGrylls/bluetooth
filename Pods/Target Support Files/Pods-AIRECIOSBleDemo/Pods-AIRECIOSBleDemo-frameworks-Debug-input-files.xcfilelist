@@ -1,2 +1,3 @@
 ${PODS_ROOT}/Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo-frameworks.sh
+${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework
 ${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework

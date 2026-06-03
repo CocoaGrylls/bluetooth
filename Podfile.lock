@@ -1,16 +1,31 @@
 PODS:
+  - GRDB.swift (7.11.0):
+    - GRDB.swift/standard (= 7.11.0)
+  - GRDB.swift/standard (7.11.0)
   - SnapKit (5.7.1)
 
 DEPENDENCIES:
+  - GRDB.swift (from `https://github.com/groue/GRDB.swift.git`, branch `GRDB7`)
   - SnapKit
 
 SPEC REPOS:
   trunk:
     - SnapKit
 
+EXTERNAL SOURCES:
+  GRDB.swift:
+    :branch: GRDB7
+    :git: https://github.com/groue/GRDB.swift.git
+
+CHECKOUT OPTIONS:
+  GRDB.swift:
+    :commit: 9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e
+    :git: https://github.com/groue/GRDB.swift.git
+
 SPEC CHECKSUMS:
+  GRDB.swift: 7966fdea382443378b6f0e3833d24e090158679e
   SnapKit: d612e99e678a2d3b95bf60b0705ed0a35c03484a
 
-PODFILE CHECKSUM: 7fbac19740f02e6a985d74e1f0989ec108fc1c5c
+PODFILE CHECKSUM: 390045b9ff7754005f6f7cee7b624a68da8be6a7
 
 COCOAPODS: 1.16.2
