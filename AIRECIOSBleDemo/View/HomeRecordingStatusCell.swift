@@ -7,12 +7,10 @@
 
 import UIKit
 import SnapKit
-import AIRECBleKit
 
 protocol HomeRecordingStatusCellDelegate: AnyObject {
     func homeRecordingStatusCellDidTapPause(_ cell: HomeRecordingStatusCell)
     func homeRecordingStatusCellDidTapStop(_ cell: HomeRecordingStatusCell)
-    func homeRecordingStatusCellDidTapPlay(_ cell: HomeRecordingStatusCell)
 }
 
 final class HomeRecordingStatusCell: UITableViewCell {
@@ -24,12 +22,10 @@ final class HomeRecordingStatusCell: UITableViewCell {
     private let cardView = UIView()
     private let titleLabel = UILabel()
     private let statusPillLabel = UILabel()
-    private let deviceLabel = UILabel()
     private let timeLabel = UILabel()
     private let waveformView = RecordingStatusWaveformView()
     private let pauseButton = UIButton(type: .system)
     private let stopButton = UIButton(type: .system)
-    private let playButton = UIButton(type: .system)
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -45,15 +41,13 @@ final class HomeRecordingStatusCell: UITableViewCell {
         waveformView.isAnimatingWave = false
     }
 
-    func configure(device: AIRECBleDevice?, elapsedText: String, isPaused: Bool) {
+    func configure(elapsedText: String, isPaused: Bool) {
         titleLabel.text = isPaused ? "录音已暂停" : "正在录音"
         statusPillLabel.text = isPaused ? "已暂停" : "录音中"
         statusPillLabel.textColor = isPaused ? Theme.audioYellow : Theme.audioGreen
         statusPillLabel.backgroundColor = (isPaused ? Theme.audioYellow : Theme.audioGreen).withAlphaComponent(0.16)
-        deviceLabel.text = device?.name.isEmpty == false ? "\(device!.name) · 蓝牙已连接" : "蓝牙录音卡 · 已连接"
         timeLabel.text = elapsedText
-        pauseButton.setImage(UIImage(systemName: isPaused ? "play.fill" : "pause.fill"), for: .normal)
-        pauseButton.accessibilityLabel = isPaused ? "继续录音" : "暂停录音"
+        pauseButton.setTitle(isPaused ? "开始录音" : "暂停录音", for: .normal)
         waveformView.isAnimatingWave = !isPaused
     }
 
@@ -101,15 +95,6 @@ final class HomeRecordingStatusCell: UITableViewCell {
             make.height.equalTo(24)
         }
 
-        deviceLabel.textColor = Theme.bluetoothHeaderSecondaryText
-        deviceLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        deviceLabel.lineBreakMode = .byTruncatingTail
-        cardView.addSubview(deviceLabel)
-        deviceLabel.snp.makeConstraints { make in
-            make.top.equalTo(topRow.snp.bottom).offset(8)
-            make.left.right.equalToSuperview().inset(22)
-        }
-
         timeLabel.textColor = Theme.bluetoothHeaderPrimaryText
         timeLabel.font = .monospacedDigitSystemFont(ofSize: 42, weight: .semibold)
         timeLabel.textAlignment = .center
@@ -117,7 +102,7 @@ final class HomeRecordingStatusCell: UITableViewCell {
         timeLabel.minimumScaleFactor = 0.75
         cardView.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { make in
-            make.top.equalTo(deviceLabel.snp.bottom).offset(12)
+            make.top.equalTo(topRow.snp.bottom).offset(20)
             make.left.right.equalToSuperview().inset(22)
             make.height.equalTo(48)
         }
@@ -130,36 +115,39 @@ final class HomeRecordingStatusCell: UITableViewCell {
             make.height.equalTo(26)
         }
 
-        let buttonRow = UIStackView(arrangedSubviews: [pauseButton, stopButton, playButton])
-        buttonRow.axis = .horizontal
-        buttonRow.alignment = .center
-        buttonRow.distribution = .equalSpacing
-        cardView.addSubview(buttonRow)
-        buttonRow.snp.makeConstraints { make in
+       
+        cardView.addSubview(pauseButton)
+        cardView.addSubview(stopButton)
+
+        pauseButton.snp.makeConstraints { make in
             make.top.equalTo(waveformView.snp.bottom).offset(16)
-            make.left.right.equalToSuperview().inset(54)
-            make.bottom.equalToSuperview().offset(-18)
+            make.left.equalToSuperview().offset(60)
+        }
+        
+       
+
+        stopButton.snp.makeConstraints { make in
+            make.top.equalTo(waveformView.snp.bottom).offset(16)
+            make.right.equalToSuperview().offset(-60)
         }
 
-        configureRoundButton(pauseButton, systemName: "pause.fill", tintColor: Theme.bluetoothButtonText, backgroundColor: Theme.bluetoothButtonBackground)
-        configureRoundButton(stopButton, systemName: "stop.fill", tintColor: .white, backgroundColor: UIColor(hexValue: 0xEF4444))
-        configureRoundButton(playButton, systemName: "play.fill", tintColor: Theme.audioPlayTint, backgroundColor: Theme.audioPlayBackground)
+        configureTextButton(pauseButton, title: "暂停录音", tintColor: .white, backgroundColor: Theme.bluetoothButtonBackground)
+        configureTextButton(stopButton, title: "保存录音", tintColor: .white, backgroundColor: UIColor(hexValue: 0xEF4444))
 
-        playButton.alpha = 0.45
-        playButton.isEnabled = false
         pauseButton.addTarget(self, action: #selector(pauseTapped), for: .touchUpInside)
         stopButton.addTarget(self, action: #selector(stopTapped), for: .touchUpInside)
-        playButton.addTarget(self, action: #selector(playTapped), for: .touchUpInside)
     }
 
-    private func configureRoundButton(_ button: UIButton, systemName: String, tintColor: UIColor, backgroundColor: UIColor) {
-        button.setImage(UIImage(systemName: systemName), for: .normal)
-        button.tintColor = tintColor
+    private func configureTextButton(_ button: UIButton, title: String, tintColor: UIColor, backgroundColor: UIColor) {
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(tintColor, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 14)
         button.backgroundColor = backgroundColor
-        button.layer.cornerRadius = 26
-        button.imageEdgeInsets = UIEdgeInsets(top: 14, left: 14, bottom: 14, right: 14)
+        button.layer.cornerRadius = 15
+        button.clipsToBounds = true
         button.snp.makeConstraints { make in
-            make.width.height.equalTo(52)
+            make.width.equalTo(88)
+            make.height.equalTo(30)
         }
     }
 
@@ -169,10 +157,6 @@ final class HomeRecordingStatusCell: UITableViewCell {
 
     @objc private func stopTapped() {
         delegate?.homeRecordingStatusCellDidTapStop(self)
-    }
-
-    @objc private func playTapped() {
-        delegate?.homeRecordingStatusCellDidTapPlay(self)
     }
 }
 

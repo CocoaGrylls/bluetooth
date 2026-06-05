@@ -23,10 +23,7 @@ class HomeViewViewController: UIViewController {
     private var hasManuallySelectedFilter = false
     private var isRecording = false
     private var isRecordPaused = false
-    private var recordStartDate = Date()
-    private var pausedElapsed: TimeInterval = 0
-    private var recordTimer: Timer?
-    private var recordElapsedText = "00:00:00"
+    private var recordingTimer = RecordingTimerModel()
     private var appInitiatedPauseResume = false
 
     private let audioExts: Set<String> = ["wav", "mp3", "aac", "m4a", "ogg", "opus", "flac", "pcm", "amr"]
@@ -46,7 +43,6 @@ class HomeViewViewController: UIViewController {
 
     deinit {
         AIRECBleChannel.shared.removeObserver(self)
-        stopRecordTimer()
     }
 
     private func setupView() {
@@ -97,100 +93,58 @@ class HomeViewViewController: UIViewController {
     private func fetchConnectedDeviceSnapshot() {
         let channel = AIRECBleChannel.shared
         guard channel.isConnected else { return }
-        channel.fetchAllDeviceInfo()
+        channel.fetchDeviceInfo()
         channel.fetchFileList()
     }
 
     private func reloadRecordingStatusRow(animated: Bool = true) {
-        reloadBluetoothInfoRow(animated: animated)
+        let animation: UITableView.RowAnimation = animated ? .fade : .none
+        tableView.reloadSections(IndexSet(integer: 0), with: animation)
     }
 
-    private func startRecordTimer(reset: Bool) {
-        if reset {
-            recordStartDate = Date()
-            pausedElapsed = 0
-            recordElapsedText = "00:00:00"
-        }
-        recordTimer?.invalidate()
-        recordTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(recordTimerTick), userInfo: nil, repeats: true)
-        RunLoop.main.add(recordTimer!, forMode: .common)
-        recordTimerTick()
+    private func resetRecordingDuration() {
+        recordingTimer.elapsedText = "00:00:00"
     }
 
-    private func resumeRecordTimer() {
-        recordStartDate = Date()
-        startRecordTimer(reset: false)
+    private func updateRecordingDuration(_ durationSec: Int64) {
+        recordingTimer.elapsedText = formatRecordingDuration(durationSec)
+        reloadRecordingStatusCellIfVisible()
     }
 
-    private func pauseRecordTimer() {
-        pausedElapsed += Date().timeIntervalSince(recordStartDate)
-        recordTimer?.invalidate()
-        recordTimer = nil
-        recordTimerTick()
+    private func formatRecordingDuration(_ durationSec: Int64) -> String {
+        String(format: "%02d:%02d:%02d", durationSec / 3600, (durationSec % 3600) / 60, durationSec % 60)
     }
 
-    private func stopRecordTimer() {
-        recordTimer?.invalidate()
-        recordTimer = nil
-        pausedElapsed = 0
-        recordElapsedText = "00:00:00"
-    }
-
-    @objc private func recordTimerTick() {
-        let total: Int
-        if isRecordPaused {
-            total = Int(pausedElapsed)
-        } else {
-            total = Int(pausedElapsed + Date().timeIntervalSince(recordStartDate))
-        }
-        recordElapsedText = String(format: "%02d:%02d:%02d", total / 3600, (total % 3600) / 60, total % 60)
-        if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? HomeRecordingStatusCell {
-            cell.configure(device: AIRECBleChannel.shared.getConnectedDevice(), elapsedText: recordElapsedText, isPaused: isRecordPaused)
+    private func reloadRecordingStatusCellIfVisible() {
+        let recordingStatusIndexPath = IndexPath(row: 1, section: 0)
+        if tableView.indexPathsForVisibleRows?.contains(recordingStatusIndexPath) == true {
+            tableView.reloadRows(at: [recordingStatusIndexPath], with: .none)
         }
     }
 
     private func syncRecordingState(recording: Bool, paused: Bool, resetTimerWhenStarting: Bool) {
         let wasRecording = isRecording
-        let wasPaused = isRecordPaused
         isRecording = recording
         isRecordPaused = paused
 
         if recording {
             if !wasRecording {
-                if paused {
-                    if resetTimerWhenStarting {
-                        recordStartDate = Date()
-                        pausedElapsed = 0
-                        recordElapsedText = "00:00:00"
-                    }
-                    recordTimer?.invalidate()
-                    recordTimer = nil
-                    recordTimerTick()
-                } else {
-                    startRecordTimer(reset: resetTimerWhenStarting)
+                if resetTimerWhenStarting {
+                    resetRecordingDuration()
                 }
-            } else if wasPaused && !paused {
-                resumeRecordTimer()
-            } else if !wasPaused && paused {
-                pauseRecordTimer()
             }
         } else {
-            stopRecordTimer()
+            resetRecordingDuration()
         }
 
         if wasRecording != recording {
             reloadRecordingStatusRow()
         } else {
-            recordTimerTick()
+            reloadRecordingStatusCellIfVisible()
         }
     }
 
     @objc private func connectButtonTapped() {
-        if AIRECBleChannel.shared.isConnected {
-            fetchConnectedDeviceSnapshot()
-            return
-        }
-
         let scanVC = ScanPeripheralViewController()
         navigationController?.pushViewController(scanVC, animated: true)
     }
@@ -206,7 +160,7 @@ class HomeViewViewController: UIViewController {
 
     private func reloadLocalFiles() {
         localItems = loadLocalAudioRecords()
-        applyFilter()
+        queryCurrentDisplayFileData()
         reloadFileList()
     }
 
@@ -311,11 +265,11 @@ class HomeViewViewController: UIViewController {
         if !hasManuallySelectedFilter {
             currentFilter = .device
         }
-        applyFilter()
+        queryCurrentDisplayFileData()
         reloadFileList()
     }
 
-    private func applyFilter() {
+    private func queryCurrentDisplayFileData() {
         switch currentFilter {
         case .all:
             displayItems = []
@@ -352,6 +306,57 @@ class HomeViewViewController: UIViewController {
         item.localPath = record.localPath.isEmpty ? nil : record.resolvedLocalPath
         item.isDevice = record.isDevice
         return item
+    }
+
+    private func recordByUpdatingDisplayName(_ record: LocalAudioRecord, displayName: String) -> LocalAudioRecord {
+        LocalAudioRecord(
+            id: record.id,
+            fileName: record.fileName,
+            displayName: displayName,
+            fileSize: record.fileSize,
+            createTime: record.createTime,
+            localPath: record.localPath,
+            isDevice: record.isDevice,
+            updatedAt: Int64(Date().timeIntervalSince1970)
+        )
+    }
+
+    private func updateDisplayName(for record: LocalAudioRecord, displayName: String) {
+        let updatedRecord = recordByUpdatingDisplayName(record, displayName: displayName)
+
+        if let index = localItems.firstIndex(where: { $0.id == record.id }) {
+            localItems[index] = updatedRecord
+            LocalAudioRecordManager.shared.updateDisplayName(id: record.id, displayName: displayName)
+        }
+
+        if let index = deviceItems.firstIndex(where: { $0.id == record.id }) {
+            deviceItems[index] = updatedRecord
+        }
+
+        queryCurrentDisplayFileData()
+        reloadCell(id: record.id)
+        showToast("修改成功")
+    }
+
+    private func presentRenameAlert(for record: LocalAudioRecord) {
+        let alert = UIAlertController(title: "修改文件名称", message: nil, preferredStyle: .alert)
+        alert.addTextField { textField in
+            textField.text = record.displayName
+            textField.clearButtonMode = .whileEditing
+            textField.returnKeyType = .done
+            textField.placeholder = "文件名称"
+        }
+        alert.addAction(UIAlertAction(title: "取消", style: .cancel))
+        alert.addAction(UIAlertAction(title: "确定", style: .default) { [weak self, weak alert] _ in
+            guard let self = self else { return }
+            let displayName = alert?.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            guard !displayName.isEmpty else {
+                self.showToast("文件名称不能为空")
+                return
+            }
+            self.updateDisplayName(for: record, displayName: displayName)
+        })
+        present(alert, animated: true)
     }
 
     private func makeRecordingFilesHeaderView() -> UIView {
@@ -406,7 +411,7 @@ class HomeViewViewController: UIViewController {
             guard let self = self else { return }
             self.currentFilter = filter
             self.hasManuallySelectedFilter = true
-            self.applyFilter()
+            self.queryCurrentDisplayFileData()
             self.reloadFileList()
         })
     }
@@ -443,6 +448,8 @@ class HomeViewViewController: UIViewController {
 
 extension HomeViewViewController: AIRECBleDelegate {
 
+    // MARK: - Connection State
+
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
         fetchConnectedDeviceSnapshot()
     }
@@ -460,6 +467,8 @@ extension HomeViewViewController: AIRECBleDelegate {
         }
         reloadLocalFiles()
     }
+
+    // MARK: - Device Info
 
     func bleManager(_ manager: AIRECBleManager, didUpdateDeviceInfo device: AIRECBleDevice) {
         reloadBluetoothInfoRow()
@@ -485,9 +494,7 @@ extension HomeViewViewController: AIRECBleDelegate {
         }
     }
 
-    func bleManager(_ manager: AIRECBleManager, didUpdateFileList files: [AIRECBleFile]) {
-        reloadDeviceFiles(files)
-    }
+    // MARK: - Recording
 
     func bleManager(_ manager: AIRECBleManager, didChangeRecordState recording: Bool, fileName: String) {
         syncRecordingState(recording: recording, paused: false, resetTimerWhenStarting: true)
@@ -515,10 +522,16 @@ extension HomeViewViewController: AIRECBleDelegate {
     }
 
     func bleManager(_ manager: AIRECBleManager, didUpdateRecordDuration durationSec: Int64) {
-        recordStartDate = Date().addingTimeInterval(-TimeInterval(durationSec))
-        pausedElapsed = 0
-        recordElapsedText = String(format: "%02d:%02d:%02d", durationSec / 3600, (durationSec % 3600) / 60, durationSec % 60)
-        recordTimerTick()
+        updateRecordingDuration(durationSec)
+        if !isRecording {
+            syncRecordingState(recording: true, paused: false, resetTimerWhenStarting: false)
+        }
+    }
+
+    // MARK: - Files
+
+    func bleManager(_ manager: AIRECBleManager, didUpdateFileList files: [AIRECBleFile]) {
+        reloadDeviceFiles(files)
     }
 
     func bleManager(_ manager: AIRECBleManager, didDeleteFile fileName: String, success: Bool) {
@@ -567,7 +580,7 @@ extension HomeViewViewController: AIRECBleDelegate {
         localItems = localItems.sorted { left, right in
             left.createTime == right.createTime ? left.fileName > right.fileName : left.createTime > right.createTime
         }
-        applyFilter()
+        queryCurrentDisplayFileData()
         reloadFileList()
         showToast("下载完成：\(file.fileName)")
     }
@@ -595,23 +608,23 @@ extension HomeViewViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        section == 0 ? 1 : displayItems.count
+        section == 0 ? (isRecording ? 2 : 1) : displayItems.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            if isRecording {
+            if indexPath.row == 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: HomeBluetoothDeviceInfoCell.reuseId, for: indexPath) as! HomeBluetoothDeviceInfoCell
+                let device = AIRECBleChannel.shared.isConnected ? AIRECBleChannel.shared.getConnectedDevice() : nil
+                cell.configure(device: device)
+                cell.delegate = self
+                return cell
+            } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: HomeRecordingStatusCell.reuseId, for: indexPath) as! HomeRecordingStatusCell
-                cell.configure(device: AIRECBleChannel.shared.getConnectedDevice(), elapsedText: recordElapsedText, isPaused: isRecordPaused)
+                cell.configure(elapsedText: recordingTimer.elapsedText, isPaused: isRecordPaused)
                 cell.delegate = self
                 return cell
             }
-
-            let cell = tableView.dequeueReusableCell(withIdentifier: HomeBluetoothDeviceInfoCell.reuseId, for: indexPath) as! HomeBluetoothDeviceInfoCell
-            let device = AIRECBleChannel.shared.isConnected ? AIRECBleChannel.shared.getConnectedDevice() : nil
-            cell.configure(device: device)
-            cell.delegate = self
-            return cell
         }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: HomeRecordingFileCell.reuseId, for: indexPath) as! HomeRecordingFileCell
@@ -625,7 +638,7 @@ extension HomeViewViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            return isRecording ? 250 : 214
+            return indexPath.row == 0 ? 214 : 220
         }
         return 130
     }
@@ -682,9 +695,6 @@ extension HomeViewViewController: HomeRecordingStatusCellDelegate {
         AIRECBleChannel.shared.endRecord()
     }
 
-    func homeRecordingStatusCellDidTapPlay(_ cell: HomeRecordingStatusCell) {
-        showToast("录音保存后可播放")
-    }
 }
 
 extension HomeViewViewController: HomeRecordingFileCellDelegate {
@@ -746,6 +756,9 @@ extension HomeViewViewController: HomeRecordingFileCellDelegate {
     func homeRecordingFileCellDidTapMore(_ cell: HomeRecordingFileCell) {
         guard let record = record(for: cell) else { return }
         let alert = UIAlertController(title: record.displayName, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "修改名称", style: .default) { [weak self] _ in
+            self?.presentRenameAlert(for: record)
+        })
         alert.addAction(UIAlertAction(title: "删除", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             if self.currentFilter == .device, record.isDevice {
@@ -763,7 +776,7 @@ extension HomeViewViewController: HomeRecordingFileCellDelegate {
             } else if self.currentFilter == .local {
                 self.localItems.removeAll { $0.id == record.id }
             }
-            self.applyFilter()
+            self.queryCurrentDisplayFileData()
             self.reloadFileList()
         })
         alert.addAction(UIAlertAction(title: "取消", style: .cancel))
