@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class BluetoothRingView: UIView {
+class HomeBluetoothRingView: UIView {
 
     private let outerRingView = UIView()
     private let middleRingView = UIView()

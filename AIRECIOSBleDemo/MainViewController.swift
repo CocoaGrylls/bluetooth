@@ -861,7 +861,7 @@ extension MainViewController: FileCellDelegate {
             showToast("文件不存在，请重新下载"); return
         }
         navigationController?.pushViewController(
-            PlayerViewController(filePath: localPath, fileName: item.fileName, fileSize: item.fileSizeStr),
+            AudioPlayViewController(filePath: localPath, fileName: item.fileName, fileSize: item.fileSizeStr),
             animated: true)
     }
 }

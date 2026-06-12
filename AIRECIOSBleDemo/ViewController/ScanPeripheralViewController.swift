@@ -99,8 +99,8 @@ class ScanPeripheralViewController: UIViewController {
         let tableView = UITableView(frame: UIScreen.main.bounds, style: .insetGrouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
-        tableView.register(EmptyAIRECDeviceCell.self, forCellReuseIdentifier: EmptyAIRECDeviceCell.reuseId)
+        tableView.register(ScanBlueToothDeviceInfoCell.self, forCellReuseIdentifier: ScanBlueToothDeviceInfoCell.reuseId)
+        tableView.register(ScanEmptyAIRECDeviceCell.self, forCellReuseIdentifier: ScanEmptyAIRECDeviceCell.reuseId)
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .singleLine
         tableView.tableHeaderView = radarContainer
@@ -121,10 +121,10 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard !devices.isEmpty else {
-            return tableView.dequeueReusableCell(withIdentifier: EmptyAIRECDeviceCell.reuseId, for: indexPath)
+            return tableView.dequeueReusableCell(withIdentifier: ScanEmptyAIRECDeviceCell.reuseId, for: indexPath)
         }
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: BlueToothDeviceInfoCell.reuseId, for: indexPath) as! BlueToothDeviceInfoCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ScanBlueToothDeviceInfoCell.reuseId, for: indexPath) as! ScanBlueToothDeviceInfoCell
         cell.configure(device: devices[indexPath.row])
         cell.connectButtonTapped = { [weak self] in
             guard let self = self else { return }

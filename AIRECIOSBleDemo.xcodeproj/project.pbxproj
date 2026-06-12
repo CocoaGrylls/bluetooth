@@ -12,7 +12,7 @@
 		946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */; };
 		946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C52FBC6645002F0C5F /* ScanContainerView.swift */; };
 		946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824C92FBED57E002F0C5F /* HomeViewViewController.swift */; };
-		946824CC2FBF3921002F0C5F /* BluetoothRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824CB2FBF3921002F0C5F /* BluetoothRingView.swift */; };
+		946824CC2FBF3921002F0C5F /* HomeBluetoothRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824CB2FBF3921002F0C5F /* HomeBluetoothRingView.swift */; };
 		946824CE2FC00001002F0C5F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824CD2FC00001002F0C5F /* Theme.swift */; };
 		946824D02FC4F8E1002F0C5F /* HomeRecordingFileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824CF2FC4F8E1002F0C5F /* HomeRecordingFileCell.swift */; };
 		946824D22FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D12FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift */; };
@@ -20,6 +20,12 @@
 		946824D62FD71702002F0C5F /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D52FD71702002F0C5F /* SettingsViewController.swift */; };
 		946824D82FD8F001002F0C5F /* HomeRecordingStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D72FD8F001002F0C5F /* HomeRecordingStatusCell.swift */; };
 		946824DA2FD8F1A1002F0C5F /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824D92FD8F1A1002F0C5F /* UIColor+Hex.swift */; };
+		946824DC2FD8F2D1002F0C5F /* RecordingTimerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946824DB2FD8F2D1002F0C5F /* RecordingTimerModel.swift */; };
+		94A311692FD9474C0078A1C3 /* AudioPlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A311682FD9474C0078A1C3 /* AudioPlayViewController.swift */; };
+		94A3116B2FD9489C0078A1C3 /* AudioPlaybackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3116A2FD9489C0078A1C3 /* AudioPlaybackManager.swift */; };
+		94A3116D2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3116C2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift */; };
+		94A3116F2FD94A130078A1C3 /* AudioWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3116E2FD94A130078A1C3 /* AudioWaveformView.swift */; };
+		94A311712FD99F3C0078A1C3 /* AudioPlayHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A311702FD99F3C0078A1C3 /* AudioPlayHeaderView.swift */; };
 		A005 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* ScanViewController.swift */; };
 		A006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* MainViewController.swift */; };
 		A007 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* PlayerViewController.swift */; };
@@ -27,9 +33,9 @@
 		A009 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F009 /* SceneDelegate.swift */; };
 		A010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F010 /* Assets.xcassets */; };
 		A012 /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* FileCell.swift */; };
-		A013 /* BlueToothDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* BlueToothDeviceInfoCell.swift */; };
+		A013 /* ScanBlueToothDeviceInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* ScanBlueToothDeviceInfoCell.swift */; };
 		A014 /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* AudioItem.swift */; };
-		A015 /* EmptyAIRECDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* EmptyAIRECDeviceCell.swift */; };
+		A015 /* ScanEmptyAIRECDeviceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* ScanEmptyAIRECDeviceCell.swift */; };
 		A016 /* AIRECBleChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F016 /* AIRECBleChannel.swift */; };
 		A017 /* LocalAudioRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F017 /* LocalAudioRecord.swift */; };
 		A018 /* LocalAudioRecordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F018 /* LocalAudioRecordManager.swift */; };
@@ -63,7 +69,7 @@
 		946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanPeripheralViewController.swift; sourceTree = "<group>"; };
 		946824C52FBC6645002F0C5F /* ScanContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanContainerView.swift; sourceTree = "<group>"; };
 		946824C92FBED57E002F0C5F /* HomeViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewViewController.swift; sourceTree = "<group>"; };
-		946824CB2FBF3921002F0C5F /* BluetoothRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothRingView.swift; sourceTree = "<group>"; };
+		946824CB2FBF3921002F0C5F /* HomeBluetoothRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBluetoothRingView.swift; sourceTree = "<group>"; };
 		946824CD2FC00001002F0C5F /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		946824CF2FC4F8E1002F0C5F /* HomeRecordingFileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecordingFileCell.swift; sourceTree = "<group>"; };
 		946824D12FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBluetoothDeviceInfoCell.swift; sourceTree = "<group>"; };
@@ -71,6 +77,12 @@
 		946824D52FD71702002F0C5F /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		946824D72FD8F001002F0C5F /* HomeRecordingStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecordingStatusCell.swift; sourceTree = "<group>"; };
 		946824D92FD8F1A1002F0C5F /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
+		946824DB2FD8F2D1002F0C5F /* RecordingTimerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingTimerModel.swift; sourceTree = "<group>"; };
+		94A311682FD9474C0078A1C3 /* AudioPlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayViewController.swift; sourceTree = "<group>"; };
+		94A3116A2FD9489C0078A1C3 /* AudioPlaybackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackManager.swift; sourceTree = "<group>"; };
+		94A3116C2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformAnalyzer.swift; sourceTree = "<group>"; };
+		94A3116E2FD94A130078A1C3 /* AudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformView.swift; sourceTree = "<group>"; };
+		94A311702FD99F3C0078A1C3 /* AudioPlayHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayHeaderView.swift; sourceTree = "<group>"; };
 		F005 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
 		F006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F007 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
@@ -79,9 +91,9 @@
 		F010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F011 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F012 /* FileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
-		F013 /* BlueToothDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueToothDeviceInfoCell.swift; sourceTree = "<group>"; };
+		F013 /* ScanBlueToothDeviceInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanBlueToothDeviceInfoCell.swift; sourceTree = "<group>"; };
 		F014 /* AudioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioItem.swift; sourceTree = "<group>"; };
-		F015 /* EmptyAIRECDeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyAIRECDeviceCell.swift; sourceTree = "<group>"; };
+		F015 /* ScanEmptyAIRECDeviceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanEmptyAIRECDeviceCell.swift; sourceTree = "<group>"; };
 		F016 /* AIRECBleChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRECBleChannel.swift; sourceTree = "<group>"; };
 		F017 /* LocalAudioRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioRecord.swift; sourceTree = "<group>"; };
 		F018 /* LocalAudioRecordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioRecordManager.swift; sourceTree = "<group>"; };
@@ -119,13 +131,16 @@
 		946824C72FBD6472002F0C5F /* View */ = {
 			isa = PBXGroup;
 			children = (
+				946824CB2FBF3921002F0C5F /* HomeBluetoothRingView.swift */,
 				946823D92FBC2F72002F0C5F /* ScanRippleView.swift */,
 				946824C52FBC6645002F0C5F /* ScanContainerView.swift */,
 				946824D12FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift */,
 				946824CF2FC4F8E1002F0C5F /* HomeRecordingFileCell.swift */,
 				946824D72FD8F001002F0C5F /* HomeRecordingStatusCell.swift */,
-				F013 /* BlueToothDeviceInfoCell.swift */,
-				F015 /* EmptyAIRECDeviceCell.swift */,
+				94A3116E2FD94A130078A1C3 /* AudioWaveformView.swift */,
+				94A311702FD99F3C0078A1C3 /* AudioPlayHeaderView.swift */,
+				F013 /* ScanBlueToothDeviceInfoCell.swift */,
+				F015 /* ScanEmptyAIRECDeviceCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -137,7 +152,7 @@
 				946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */,
 				946824C92FBED57E002F0C5F /* HomeViewViewController.swift */,
 				946824D52FD71702002F0C5F /* SettingsViewController.swift */,
-				946824CB2FBF3921002F0C5F /* BluetoothRingView.swift */,
+				94A311682FD9474C0078A1C3 /* AudioPlayViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -155,15 +170,26 @@
 			isa = PBXGroup;
 			children = (
 				F016 /* AIRECBleChannel.swift */,
-				F017 /* LocalAudioRecord.swift */,
 				F018 /* LocalAudioRecordManager.swift */,
+				94A3116A2FD9489C0078A1C3 /* AudioPlaybackManager.swift */,
+				94A3116C2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift */,
 			);
 			path = Manager;
+			sourceTree = "<group>";
+		};
+		94A311672FD0146F0078A1C3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F017 /* LocalAudioRecord.swift */,
+				946824DB2FD8F2D1002F0C5F /* RecordingTimerModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		GRP_APP /* AIRECIOSBleDemo */ = {
 			isa = PBXGroup;
 			children = (
+				94A311672FD0146F0078A1C3 /* Model */,
 				946824CC2FC02EC6002F0C5F /* Manager */,
 				946824CB2FC02EA2002F0C5F /* AppTheme */,
 				946824C82FBD8997002F0C5F /* ViewController */,
@@ -290,9 +316,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AIRECIOSBleDemo/Pods-AIRECIOSBleDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -331,7 +361,7 @@
 				A008 /* AppDelegate.swift in Sources */,
 				946823DC2FBC32E8002F0C5F /* ScanPeripheralViewController.swift in Sources */,
 				946824CA2FBED57E002F0C5F /* HomeViewViewController.swift in Sources */,
-				946824CC2FBF3921002F0C5F /* BluetoothRingView.swift in Sources */,
+				946824CC2FBF3921002F0C5F /* HomeBluetoothRingView.swift in Sources */,
 				946824CE2FC00001002F0C5F /* Theme.swift in Sources */,
 				946824D22FD70F9E002F0C5F /* HomeBluetoothDeviceInfoCell.swift in Sources */,
 				946824D02FC4F8E1002F0C5F /* HomeRecordingFileCell.swift in Sources */,
@@ -348,12 +378,18 @@
 				A007 /* PlayerViewController.swift in Sources */,
 				A012 /* FileCell.swift in Sources */,
 				946823DA2FBC2F72002F0C5F /* ScanRippleView.swift in Sources */,
-				A013 /* BlueToothDeviceInfoCell.swift in Sources */,
-				A015 /* EmptyAIRECDeviceCell.swift in Sources */,
+				A013 /* ScanBlueToothDeviceInfoCell.swift in Sources */,
+				A015 /* ScanEmptyAIRECDeviceCell.swift in Sources */,
 				A016 /* AIRECBleChannel.swift in Sources */,
 				A017 /* LocalAudioRecord.swift in Sources */,
+				946824DC2FD8F2D1002F0C5F /* RecordingTimerModel.swift in Sources */,
 				A018 /* LocalAudioRecordManager.swift in Sources */,
+				94A3116B2FD9489C0078A1C3 /* AudioPlaybackManager.swift in Sources */,
+				94A3116D2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift in Sources */,
 				AOPUS1 /* OpusDecoder.swift in Sources */,
+				94A311692FD9474C0078A1C3 /* AudioPlayViewController.swift in Sources */,
+				94A3116F2FD94A130078A1C3 /* AudioWaveformView.swift in Sources */,
+				94A311712FD99F3C0078A1C3 /* AudioPlayHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

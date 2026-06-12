@@ -749,7 +749,8 @@ extension HomeViewViewController: HomeRecordingFileCellDelegate {
             return
         }
 
-        let player = PlayerViewController(filePath: localPath, fileName: record.displayName, fileSize: item.fileSizeStr)
+        let player = AudioPlayViewController(filePath: localPath, fileName: record.displayName, fileDate: record.createTime, fileSize: item.fileSizeStr)
+        player.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(player, animated: true)
     }
 

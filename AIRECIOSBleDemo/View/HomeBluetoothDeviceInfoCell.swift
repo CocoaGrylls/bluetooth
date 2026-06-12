@@ -21,7 +21,7 @@ final class HomeBluetoothDeviceInfoCell: UITableViewCell {
 
     private let cardView = UIView()
     private let decorativeIconView = UIImageView(image: UIImage(systemName: "waveform.path.ecg.rectangle"))
-    private let bluetoothRingView = BluetoothRingView()
+    private let bluetoothRingView = HomeBluetoothRingView()
     private let connectionTitleLabel = UILabel()
     private let connectionSubtitleLabel = UILabel()
     private let connectButton = UIButton(type: .system)

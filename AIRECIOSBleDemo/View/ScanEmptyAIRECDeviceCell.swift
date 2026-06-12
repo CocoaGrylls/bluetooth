@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class EmptyAIRECDeviceCell: UITableViewCell {
+class ScanEmptyAIRECDeviceCell: UITableViewCell {
 
     static let reuseId = "EmptyAIRECDeviceCell"
 

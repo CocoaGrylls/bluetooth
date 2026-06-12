@@ -2,7 +2,7 @@ import UIKit
 import AIRECBleKit
 import SnapKit
 
-class BlueToothDeviceInfoCell: UITableViewCell {
+class ScanBlueToothDeviceInfoCell: UITableViewCell {
     static let reuseId = "DeviceCell"
     //block: 连接按钮点击事件回调
     var connectButtonTapped: (() -> Void)?

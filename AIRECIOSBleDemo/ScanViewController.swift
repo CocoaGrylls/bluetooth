@@ -27,7 +27,7 @@ class ScanViewController: UIViewController {
         statusLabel.textColor = .secondaryLabel
         spinner.startAnimating()
 
-        tableView.register(BlueToothDeviceInfoCell.self, forCellReuseIdentifier: BlueToothDeviceInfoCell.reuseId)
+        tableView.register(ScanBlueToothDeviceInfoCell.self, forCellReuseIdentifier: ScanBlueToothDeviceInfoCell.reuseId)
         tableView.dataSource = self
         tableView.delegate   = self
 
@@ -97,7 +97,7 @@ class ScanViewController: UIViewController {
 extension ScanViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { devices.count }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: BlueToothDeviceInfoCell.reuseId, for: indexPath) as! BlueToothDeviceInfoCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ScanBlueToothDeviceInfoCell.reuseId, for: indexPath) as! ScanBlueToothDeviceInfoCell
         cell.configure(device: devices[indexPath.row])
         return cell
     }
