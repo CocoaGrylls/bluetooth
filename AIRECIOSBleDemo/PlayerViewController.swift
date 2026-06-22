@@ -195,7 +195,7 @@ class PlayerViewController: UIViewController {
         // 无扩展名 → 尝试识别格式
         if fileURL.pathExtension.isEmpty {
             print("   文件无扩展名，尝试检测格式...")
-            if let ext = detectAudioExt(path: filePath) {
+            if let ext = AudioFormatDetector.getAudioIdentifyType(path: filePath) {
                 let extName = String(ext.dropFirst())
                 print("   检测到格式: \(extName)")
                 let newURL = fileURL.appendingPathExtension(extName)
@@ -483,27 +483,6 @@ class PlayerViewController: UIViewController {
         return String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
 
-    // MARK: - 格式检测
-    private func detectAudioExt(path: String) -> String? {
-        guard let fh = FileHandle(forReadingAtPath: path),
-              let headerData = try? fh.read(upToCount: 12), headerData.count >= 4 else { return nil }
-        try? fh.close()
-        let bytes = [UInt8](headerData)
-        print("      格式检测字节: \(bytes.prefix(8).map { String(format: "%02X", $0) }.joined(separator: " "))")
-        if bytes[0]==0x63&&bytes[1]==0x61&&bytes[2]==0x66&&bytes[3]==0x66 { return ".caf" }
-        if bytes[0]==0x49&&bytes[1]==0x44&&bytes[2]==0x33 { return ".mp3" }
-        if bytes[0]==0xFF&&(bytes[1]&0xE0)==0xE0 { return ".mp3" }
-        if bytes[0]==0x52&&bytes[1]==0x49&&bytes[2]==0x46&&bytes[3]==0x46 { return ".wav" }
-        if bytes[0]==0x4F&&bytes[1]==0x67&&bytes[2]==0x67&&bytes[3]==0x53 { return ".opus" }
-        if bytes[0]==0xFF&&(bytes[1]&0xF0)==0xF0 { return ".aac" }
-        if bytes[0]==0x66&&bytes[1]==0x4C&&bytes[2]==0x61&&bytes[3]==0x43 { return ".flac" }
-        if bytes[0]==0x23&&bytes[1]==0x21&&bytes[2]==0x41&&bytes[3]==0x4D { return ".amr" }
-        if bytes[4]==0x66&&bytes[5]==0x74&&bytes[6]==0x79&&bytes[7]==0x70 { return ".m4a" }
-        if bytes[0]==0x5B&&bytes[1]==0x50 { return ".atw" }
-        if bytes[0]==0x4B&&bytes[1]==0x41 { return ".ka" }
-        print("      无法识别格式"); return nil
-    }
-
     // MARK: - 按钮事件
     @objc private func playPauseTapped() {
         if let node = playerNode {
@@ -566,7 +545,7 @@ class PlayerViewController: UIViewController {
         var sharePath = currentPlayPath
         // 如果 currentPlayPath 是原始 ATW/KA 文件但没扩展名，尝试加扩展名
         if !currentPlayPath.contains(".") {
-            if let ext = detectAudioExt(path: currentPlayPath) {
+            if let ext = AudioFormatDetector.getAudioIdentifyType(path: currentPlayPath) {
                 let newPath = currentPlayPath + ext
                 if !FileManager.default.fileExists(atPath: newPath) {
                     try? FileManager.default.copyItem(atPath: currentPlayPath, toPath: newPath)

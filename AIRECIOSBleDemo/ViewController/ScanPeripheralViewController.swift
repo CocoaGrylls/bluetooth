@@ -20,6 +20,9 @@ class ScanPeripheralViewController: UIViewController {
 
     private var devices: [AIRECBleDevice] = []
     private var seenIds = Set<String>()
+    private var connectedDevice: AIRECBleDevice? {
+        AIRECBleChannel.shared.getConnectedDevice()
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -111,21 +114,54 @@ class ScanPeripheralViewController: UIViewController {
 
 extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelegate {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return connectedDevice != nil ? 2 : 1
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return devices.isEmpty ? 100 : 80
+        if indexPath.section == 0 && connectedDevice != nil {
+            return 80
+        }
+        let targetDevices = devices
+        return targetDevices.isEmpty ? 100 : 80
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return devices.isEmpty ? 1 : devices.count
+        if section == 0 && connectedDevice != nil {
+            return 1
+        }
+        let targetSection = connectedDevice != nil ? section - 1 : section
+        if targetSection == 0 {
+            return devices.isEmpty ? 1 : devices.count
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard !devices.isEmpty else {
+        if indexPath.section == 0 && connectedDevice != nil {
+            guard let device = connectedDevice else {
+                return UITableViewCell()
+            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: ScanBlueToothDeviceInfoCell.reuseId, for: indexPath) as! ScanBlueToothDeviceInfoCell
+            cell.configure(device: device)
+            cell.connectButton.setTitle("已连接", for: .normal)
+            cell.connectButton.setTitleColor(.systemGreen, for: .normal)
+            cell.connectButton.layer.borderColor = UIColor.systemGreen.cgColor
+            cell.connectButton.isEnabled = false
+            return cell
+        }
+        
+        let targetSection = connectedDevice != nil ? indexPath.section - 1 : indexPath.section
+        if targetSection == 0 && devices.isEmpty {
             return tableView.dequeueReusableCell(withIdentifier: ScanEmptyAIRECDeviceCell.reuseId, for: indexPath)
         }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: ScanBlueToothDeviceInfoCell.reuseId, for: indexPath) as! ScanBlueToothDeviceInfoCell
         cell.configure(device: devices[indexPath.row])
+        cell.connectButton.setTitle("连接", for: .normal)
+        cell.connectButton.setTitleColor(.systemBlue, for: .normal)
+        cell.connectButton.layer.borderColor = UIColor.systemBlue.cgColor
+        cell.connectButton.isEnabled = true
         cell.connectButtonTapped = { [weak self] in
             guard let self = self else { return }
             let device = self.devices[indexPath.row]
@@ -137,7 +173,15 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard !devices.isEmpty else { return }
+        
+        if indexPath.section == 0 && connectedDevice != nil {
+            return
+        }
+        
+        let targetSection = connectedDevice != nil ? indexPath.section - 1 : indexPath.section
+        if targetSection == 0 && devices.isEmpty {
+            return
+        }
 
         let device = devices[indexPath.row]
         AIRECBleChannel.shared.stopScan()
@@ -146,8 +190,14 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        //显示目前扫描到的设备数量
-        return "附近设备（\(devices.count)）"
+        if section == 0 && connectedDevice != nil {
+            return "已连接设备"
+        }
+        let targetSection = connectedDevice != nil ? section - 1 : section
+        if targetSection == 0 {
+            return "附近设备（\(devices.count)）"
+        }
+        return nil
     }
 }
 
@@ -163,6 +213,7 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
         radarContainer.stopScanningAnimation()
+        tableView.reloadData()
         DispatchQueue.main.async {
             self.onConnected?()
             self.navigationController?.popViewController(animated: true)
@@ -171,6 +222,7 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
         radarContainer.stopScanningAnimation()
+        tableView.reloadData()
         let msg = reason.contains("超时") ? "连接超时，请靠近设备重试" : "连接失败，请重试"
         showAlert(title: "连接失败", message: msg)
     }

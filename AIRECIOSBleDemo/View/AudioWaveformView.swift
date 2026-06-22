@@ -55,7 +55,7 @@ final class AudioWaveformView: UIView {
             let height = max(4, drawRect.height * amplitude)
             let y = drawRect.midY - height / 2
             let barRect = CGRect(x: x, y: y, width: barWidth, height: height)
-            let color = barRect.midX <= progressX ? Theme.audioBlue : UIColor(hex: 0xFFFFFF, alpha: 0.46)
+            let color = barRect.midX <= progressX ? Theme.audioBlue : UIColor(hex: 0x9EB6D8)
             color.setFill()
             UIBezierPath(roundedRect: barRect, cornerRadius: barWidth / 2).fill()
         }

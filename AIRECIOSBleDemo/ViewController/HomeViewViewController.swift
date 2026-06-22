@@ -33,16 +33,26 @@ class HomeViewViewController: UIViewController {
         self.title = "首页";
         setupView()
         AIRECBleChannel.shared.addObserver(self)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleDeviceFormatDidFinish),
+                                               name: .airecDeviceFormatDidFinish,
+                                               object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBar()
         AIRECBleChannel.shared.activate()
+        if AIRECBleChannel.shared.isConnected {
+            print("viewWillAppear");
+            AIRECBleChannel.shared.fetchDeviceInfo()
+            AIRECBleChannel.shared.fetchFileList()
+        }
     }
 
     deinit {
         AIRECBleChannel.shared.removeObserver(self)
+        NotificationCenter.default.removeObserver(self, name: .airecDeviceFormatDidFinish, object: nil)
     }
 
     private func setupView() {
@@ -156,6 +166,18 @@ class HomeViewViewController: UIViewController {
         } else {
             showToast("请先连接设备")
         }
+    }
+
+    @objc private func handleDeviceFormatDidFinish() {
+        latestDeviceFiles.removeAll()
+        deviceItems.removeAll()
+        fileStates.removeAll()
+        durationTexts.removeAll()
+        if !hasManuallySelectedFilter {
+            currentFilter = .local
+        }
+        queryCurrentDisplayFileData()
+        reloadFileList()
     }
 
     private func reloadLocalFiles() {

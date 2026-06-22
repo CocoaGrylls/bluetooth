@@ -10,11 +10,24 @@ import SnapKit
 
 final class AudioPlayHeaderView: UIView {
 
-    private let iconView = UIImageView(image: UIImage(named: "audioicon"))
+    private let fileIconContainer: UIView = {
+        let container = UIView()
+        container.layer.cornerRadius = 12
+        container.clipsToBounds = true
+        container.backgroundColor = Theme.audioBlue
+        return container
+    }()
+
+    private let iconView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "waveform"))
+        imageView.tintColor = .white
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+
     private let fileNameLabel = UILabel()
     private let fileTypeLabel = UILabel()
     private let fileDateBadgeLabel = UILabel()
-    private let fileSizeBadgeLabel = UILabel()
 
     init(fileName: String, fileDate: String, fileSize: String) {
         super.init(frame: .zero)
@@ -31,13 +44,11 @@ final class AudioPlayHeaderView: UIView {
         fileNameLabel.text = trimmedFileName
         fileNameLabel.isHidden = trimmedFileName.isEmpty
         configureBadgeLabel(fileDateBadgeLabel, imageName: "timeicon", text: fileDate)
-        configureBadgeLabel(fileSizeBadgeLabel, imageName: nil, text: fileSize)
     }
 
     private func buildUI() {
         backgroundColor = .clear
 
-        iconView.contentMode = .scaleAspectFit
         iconView.clipsToBounds = true
 
         fileNameLabel.font = .systemFont(ofSize: 22, weight: .bold)
@@ -50,21 +61,26 @@ final class AudioPlayHeaderView: UIView {
         fileTypeLabel.textColor = UIColor(hex: 0x555555)
         fileTypeLabel.textAlignment = .left
 
-        addSubview(iconView)
+        addSubview(fileIconContainer)
+        fileIconContainer.addSubview(iconView)
         addSubview(fileNameLabel)
         addSubview(fileTypeLabel)
         addSubview(fileDateBadgeLabel)
-        addSubview(fileSizeBadgeLabel)
+
+        fileIconContainer.snp.makeConstraints { make in
+            make.left.equalToSuperview()
+            make.top.equalTo(10)
+            make.width.height.equalTo(50)
+        }
 
         iconView.snp.makeConstraints { make in
-            make.left.top.equalToSuperview()
-            make.width.height.equalTo(78)
-            make.bottom.lessThanOrEqualToSuperview()
+            make.center.equalTo(fileIconContainer)
+            make.width.height.equalTo(24)
         }
 
         fileNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(iconView).offset(4)
-            make.left.equalTo(iconView.snp.right).offset(16)
+            make.top.equalTo(fileIconContainer)
+            make.left.equalTo(fileIconContainer.snp.right).offset(16)
             make.right.equalToSuperview()
         }
 
@@ -81,12 +97,7 @@ final class AudioPlayHeaderView: UIView {
             make.bottom.equalToSuperview()
         }
 
-        fileSizeBadgeLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(fileDateBadgeLabel)
-            make.left.equalTo(fileDateBadgeLabel.snp.right).offset(10)
-            make.height.equalTo(26)
-            make.right.lessThanOrEqualToSuperview()
-        }
+       
     }
 
     private func configureBadgeLabel(_ label: UILabel, imageName: String?, text: String) {

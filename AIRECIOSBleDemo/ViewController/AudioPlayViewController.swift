@@ -16,10 +16,12 @@ final class AudioPlayViewController: UIViewController {
     private let fileSize: String
     private let playbackManager = AudioPlaybackManager()
 
+    private let headerContainerView = UIView()
     private let headerView: AudioPlayHeaderView
     private let currentTimeLabel = UILabel()
     private let durationLabel = UILabel()
     private let waveformView = AudioWaveformView()
+    private let controlContainerView = UIView()
     private let rewindButton = UIButton(type: .custom)
     private let playPauseButton = UIButton(type: .custom)
     private let forwardButton = UIButton(type: .custom)
@@ -60,9 +62,9 @@ final class AudioPlayViewController: UIViewController {
         currentTimeLabel.text = "00:00"
         durationLabel.text = "--:--"
         currentTimeLabel.font = .systemFont(ofSize: 15, weight: .semibold)
-        currentTimeLabel.textColor = .white
+        currentTimeLabel.textColor = Theme.pageTitleText
         durationLabel.font = .systemFont(ofSize: 15, weight: .semibold)
-        durationLabel.textColor = .white
+        durationLabel.textColor = Theme.pageTitleText
         [currentTimeLabel, durationLabel].forEach {
             $0.isHidden = false
         }
@@ -74,6 +76,9 @@ final class AudioPlayViewController: UIViewController {
             self.playbackManager.seek(to: target)
         }
 
+        configureSectionContainer(headerContainerView)
+        configureSectionContainer(controlContainerView)
+
         let timeRow = UIView()
         timeRow.addSubview(currentTimeLabel)
         timeRow.addSubview(durationLabel)
@@ -81,8 +86,6 @@ final class AudioPlayViewController: UIViewController {
         configureIconButton(rewindButton, imageName: "houtui10s", action: #selector(rewindTapped))
         configureIconButton(playPauseButton, imageName: "bofang", action: #selector(playPauseTapped))
         configureIconButton(forwardButton, imageName: "kuaijing10s", action: #selector(forwardTapped))
-        playPauseButton.backgroundColor = Theme.audioBlue
-        playPauseButton.layer.cornerRadius = 28
         playPauseButton.isEnabled = false
 
         let rewindItem = makeControlItem(button: rewindButton, title: "后退 10 秒")
@@ -96,27 +99,35 @@ final class AudioPlayViewController: UIViewController {
         activityIndicator.hidesWhenStopped = true
 
         let waveformCard = UIView()
-        waveformCard.backgroundColor = UIColor(hex: 0x031A3A)
+        waveformCard.backgroundColor = UIColor(hex: 0xEAF2FF)
         waveformCard.layer.cornerRadius = 14
+        waveformCard.layer.borderWidth = 1
+        waveformCard.layer.borderColor = UIColor(hex: 0xC9DAF5).cgColor
         waveformCard.clipsToBounds = true
         waveformCard.addSubview(waveformView)
         waveformCard.addSubview(timeRow)
 
         let detailView = makeDetailView()
-        view.addSubview(headerView)
+        headerContainerView.addSubview(headerView)
+        controlContainerView.addSubview(controlRow)
+        view.addSubview(headerContainerView)
         view.addSubview(waveformCard)
-        view.addSubview(controlRow)
+        view.addSubview(controlContainerView)
         view.addSubview(detailView)
         view.addSubview(activityIndicator)
 
+        headerContainerView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
+            make.left.equalToSuperview().offset(20)
+            make.right.equalToSuperview().offset(-20)
+        }
+
         headerView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(24)
-            make.left.equalToSuperview().offset(24)
-            make.right.equalToSuperview().offset(-24)
+            make.edges.equalToSuperview().inset(14)
         }
 
         waveformCard.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp.bottom).offset(28)
+            make.top.equalTo(headerContainerView.snp.bottom).offset(16)
             make.left.equalToSuperview().offset(20)
             make.right.equalToSuperview().offset(-20)
             make.height.equalTo(210)
@@ -147,10 +158,17 @@ final class AudioPlayViewController: UIViewController {
             make.width.equalTo(64)
         }
 
+        controlContainerView.snp.makeConstraints { make in
+            make.top.equalTo(waveformCard.snp.bottom).offset(16)
+            make.left.equalToSuperview().offset(20)
+            make.right.equalToSuperview().offset(-20)
+            make.height.equalTo(104)
+        }
+
         controlRow.snp.makeConstraints { make in
-            make.top.equalTo(waveformCard.snp.bottom).offset(28)
-            make.left.equalToSuperview().offset(42)
-            make.right.equalToSuperview().offset(-42)
+            make.left.equalToSuperview().offset(22)
+            make.right.equalToSuperview().offset(-22)
+            make.centerY.equalToSuperview()
             make.height.equalTo(82)
         }
 
@@ -169,7 +187,7 @@ final class AudioPlayViewController: UIViewController {
         }
 
         detailView.snp.makeConstraints { make in
-            make.top.equalTo(controlRow.snp.bottom).offset(28)
+            make.top.equalTo(controlContainerView.snp.bottom).offset(16)
             make.left.equalToSuperview().offset(20)
             make.right.equalToSuperview().offset(-20)
         }
@@ -179,9 +197,15 @@ final class AudioPlayViewController: UIViewController {
         }
     }
 
+    private func configureSectionContainer(_ view: UIView) {
+        view.backgroundColor = Theme.pageControlBackground
+        view.layer.cornerRadius = 14
+        view.layer.borderWidth = 0.5
+        view.layer.borderColor = Theme.pageControlBorder.cgColor
+    }
+
     private func configureIconButton(_ button: UIButton, imageName: String, action: Selector) {
         button.setImage(UIImage(named: imageName), for: .normal)
-        button.tintColor = Theme.audioBlue
         button.addTarget(self, action: action, for: .touchUpInside)
     }
 
@@ -221,7 +245,7 @@ final class AudioPlayViewController: UIViewController {
         let container = UIView()
         container.backgroundColor = Theme.pageControlBackground
         container.layer.cornerRadius = 12
-        container.layer.borderWidth = 1
+        container.layer.borderWidth = 0.5
         container.layer.borderColor = Theme.pageControlBorder.cgColor
 
         let timeRow = makeDetailRow(iconName: "timeicon", title: "录音时间", value: fileDate)

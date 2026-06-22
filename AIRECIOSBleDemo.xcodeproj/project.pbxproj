@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,6 +26,14 @@
 		94A3116D2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3116C2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift */; };
 		94A3116F2FD94A130078A1C3 /* AudioWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A3116E2FD94A130078A1C3 /* AudioWaveformView.swift */; };
 		94A311712FD99F3C0078A1C3 /* AudioPlayHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A311702FD99F3C0078A1C3 /* AudioPlayHeaderView.swift */; };
+		94A311732FD9A5000078A1C3 /* AudioFormatDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A311722FD9A5000078A1C3 /* AudioFormatDetector.swift */; };
+		94BF7A742FE27DA900066AE8 /* DeviceSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A732FE27DA900066AE8 /* DeviceSettingsViewController.swift */; };
+		94BF7A7A2FE3CB6A00066AE8 /* DeviceSettingToggleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A792FE3CB6A00066AE8 /* DeviceSettingToggleCell.swift */; };
+		94BF7A7B2FE3CB6A00066AE8 /* DeviceSettingButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A762FE3CB6A00066AE8 /* DeviceSettingButtonCell.swift */; };
+		94BF7A7C2FE3CB6A00066AE8 /* DeviceSettingInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A782FE3CB6A00066AE8 /* DeviceSettingInfoCell.swift */; };
+		94BF7A7D2FE3CB6A00066AE8 /* DeviceSettingBottomPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A752FE3CB6A00066AE8 /* DeviceSettingBottomPickerView.swift */; };
+		94BF7A7E2FE3CB6A00066AE8 /* DeviceSettingDisclosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A772FE3CB6A00066AE8 /* DeviceSettingDisclosureCell.swift */; };
+		94BF7A802FE3CE3D00066AE8 /* DeviceSettingDisclosureWithHintCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94BF7A7F2FE3CE3D00066AE8 /* DeviceSettingDisclosureWithHintCell.swift */; };
 		A005 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* ScanViewController.swift */; };
 		A006 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* MainViewController.swift */; };
 		A007 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* PlayerViewController.swift */; };
@@ -40,6 +48,7 @@
 		A017 /* LocalAudioRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = F017 /* LocalAudioRecord.swift */; };
 		A018 /* LocalAudioRecordManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F018 /* LocalAudioRecordManager.swift */; };
 		A93DC07B3CB3B813052783FC /* Pods_AIRECIOSBleDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C748ED250346865DE6EB81C /* Pods_AIRECIOSBleDemo.framework */; };
+		AEXT1 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEXT1 /* UIViewController+Extension.swift */; };
 		AKIT1 /* AIRECBleKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FKIT /* AIRECBleKit.framework */; };
 		AKIT2 /* AIRECBleKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FKIT /* AIRECBleKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AOPUS1 /* OpusDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FOPUS1 /* OpusDecoder.swift */; };
@@ -83,6 +92,14 @@
 		94A3116C2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformAnalyzer.swift; sourceTree = "<group>"; };
 		94A3116E2FD94A130078A1C3 /* AudioWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioWaveformView.swift; sourceTree = "<group>"; };
 		94A311702FD99F3C0078A1C3 /* AudioPlayHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayHeaderView.swift; sourceTree = "<group>"; };
+		94A311722FD9A5000078A1C3 /* AudioFormatDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFormatDetector.swift; sourceTree = "<group>"; };
+		94BF7A732FE27DA900066AE8 /* DeviceSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingsViewController.swift; sourceTree = "<group>"; };
+		94BF7A752FE3CB6A00066AE8 /* DeviceSettingBottomPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingBottomPickerView.swift; sourceTree = "<group>"; };
+		94BF7A762FE3CB6A00066AE8 /* DeviceSettingButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingButtonCell.swift; sourceTree = "<group>"; };
+		94BF7A772FE3CB6A00066AE8 /* DeviceSettingDisclosureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingDisclosureCell.swift; sourceTree = "<group>"; };
+		94BF7A782FE3CB6A00066AE8 /* DeviceSettingInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingInfoCell.swift; sourceTree = "<group>"; };
+		94BF7A792FE3CB6A00066AE8 /* DeviceSettingToggleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingToggleCell.swift; sourceTree = "<group>"; };
+		94BF7A7F2FE3CE3D00066AE8 /* DeviceSettingDisclosureWithHintCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSettingDisclosureWithHintCell.swift; sourceTree = "<group>"; };
 		F005 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
 		F006 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		F007 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
@@ -98,12 +115,17 @@
 		F017 /* LocalAudioRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioRecord.swift; sourceTree = "<group>"; };
 		F018 /* LocalAudioRecordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioRecordManager.swift; sourceTree = "<group>"; };
 		FAPP /* AIRECIOSBleDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIRECIOSBleDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEXT1 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		FINF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FKIT /* AIRECBleKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AIRECBleKit.framework; sourceTree = "<group>"; };
 		FOPUS1 /* OpusDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpusDecoder.swift; sourceTree = "<group>"; };
 		FOPUS2 /* libopus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libopus.a; sourceTree = "<group>"; };
 		FOPUS3 /* AIRECIOSBleDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AIRECIOSBleDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		94BF7A822FE3DA8900066AE8 /* html */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = html; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		PH_FW /* Frameworks */ = {
@@ -131,6 +153,12 @@
 		946824C72FBD6472002F0C5F /* View */ = {
 			isa = PBXGroup;
 			children = (
+				94BF7A7F2FE3CE3D00066AE8 /* DeviceSettingDisclosureWithHintCell.swift */,
+				94BF7A752FE3CB6A00066AE8 /* DeviceSettingBottomPickerView.swift */,
+				94BF7A762FE3CB6A00066AE8 /* DeviceSettingButtonCell.swift */,
+				94BF7A772FE3CB6A00066AE8 /* DeviceSettingDisclosureCell.swift */,
+				94BF7A782FE3CB6A00066AE8 /* DeviceSettingInfoCell.swift */,
+				94BF7A792FE3CB6A00066AE8 /* DeviceSettingToggleCell.swift */,
 				946824CB2FBF3921002F0C5F /* HomeBluetoothRingView.swift */,
 				946823D92FBC2F72002F0C5F /* ScanRippleView.swift */,
 				946824C52FBC6645002F0C5F /* ScanContainerView.swift */,
@@ -148,6 +176,7 @@
 		946824C82FBD8997002F0C5F /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				94BF7A732FE27DA900066AE8 /* DeviceSettingsViewController.swift */,
 				946824D32FD71701002F0C5F /* AppTabBarController.swift */,
 				946823DB2FBC32E8002F0C5F /* ScanPeripheralViewController.swift */,
 				946824C92FBED57E002F0C5F /* HomeViewViewController.swift */,
@@ -173,6 +202,7 @@
 				F018 /* LocalAudioRecordManager.swift */,
 				94A3116A2FD9489C0078A1C3 /* AudioPlaybackManager.swift */,
 				94A3116C2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift */,
+				94A311722FD9A5000078A1C3 /* AudioFormatDetector.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -186,9 +216,22 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		94BF7A812FE3CED100066AE8 /* OrginalCode */ = {
+			isa = PBXGroup;
+			children = (
+				F005 /* ScanViewController.swift */,
+				F006 /* MainViewController.swift */,
+				F014 /* AudioItem.swift */,
+				F012 /* FileCell.swift */,
+			);
+			path = OrginalCode;
+			sourceTree = "<group>";
+		};
 		GRP_APP /* AIRECIOSBleDemo */ = {
 			isa = PBXGroup;
 			children = (
+				94BF7A822FE3DA8900066AE8 /* html */,
+				94BF7A812FE3CED100066AE8 /* OrginalCode */,
 				94A311672FD0146F0078A1C3 /* Model */,
 				946824CC2FC02EC6002F0C5F /* Manager */,
 				946824CB2FC02EA2002F0C5F /* AppTheme */,
@@ -196,15 +239,12 @@
 				946824C72FBD6472002F0C5F /* View */,
 				F008 /* AppDelegate.swift */,
 				F009 /* SceneDelegate.swift */,
-				F014 /* AudioItem.swift */,
-				F005 /* ScanViewController.swift */,
-				F006 /* MainViewController.swift */,
 				F007 /* PlayerViewController.swift */,
 				67CD6B4C2F9F414500F8579D /* ATWOpusConverter.swift */,
-				F012 /* FileCell.swift */,
 				FOPUS1 /* OpusDecoder.swift */,
 				FOPUS2 /* libopus.a */,
 				FOPUS3 /* AIRECIOSBleDemo-Bridging-Header.h */,
+				FEXT1 /* UIViewController+Extension.swift */,
 				F010 /* Assets.xcassets */,
 				F011 /* LaunchScreen.storyboard */,
 				FINF /* Info.plist */,
@@ -256,6 +296,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				94BF7A822FE3DA8900066AE8 /* html */,
 			);
 			name = AIRECIOSBleDemo;
 			productName = AIRECIOSBleDemo;
@@ -371,6 +414,11 @@
 				946824DA2FD8F1A1002F0C5F /* UIColor+Hex.swift in Sources */,
 				946824C62FBC6645002F0C5F /* ScanContainerView.swift in Sources */,
 				67CD6B4D2F9F414500F8579D /* ATWOpusConverter.swift in Sources */,
+				94BF7A7A2FE3CB6A00066AE8 /* DeviceSettingToggleCell.swift in Sources */,
+				94BF7A7B2FE3CB6A00066AE8 /* DeviceSettingButtonCell.swift in Sources */,
+				94BF7A7C2FE3CB6A00066AE8 /* DeviceSettingInfoCell.swift in Sources */,
+				94BF7A7D2FE3CB6A00066AE8 /* DeviceSettingBottomPickerView.swift in Sources */,
+				94BF7A7E2FE3CB6A00066AE8 /* DeviceSettingDisclosureCell.swift in Sources */,
 				A009 /* SceneDelegate.swift in Sources */,
 				A014 /* AudioItem.swift in Sources */,
 				A005 /* ScanViewController.swift in Sources */,
@@ -381,15 +429,19 @@
 				A013 /* ScanBlueToothDeviceInfoCell.swift in Sources */,
 				A015 /* ScanEmptyAIRECDeviceCell.swift in Sources */,
 				A016 /* AIRECBleChannel.swift in Sources */,
+				94BF7A742FE27DA900066AE8 /* DeviceSettingsViewController.swift in Sources */,
+				94BF7A802FE3CE3D00066AE8 /* DeviceSettingDisclosureWithHintCell.swift in Sources */,
 				A017 /* LocalAudioRecord.swift in Sources */,
 				946824DC2FD8F2D1002F0C5F /* RecordingTimerModel.swift in Sources */,
 				A018 /* LocalAudioRecordManager.swift in Sources */,
 				94A3116B2FD9489C0078A1C3 /* AudioPlaybackManager.swift in Sources */,
 				94A3116D2FD94A120078A1C3 /* AudioWaveformAnalyzer.swift in Sources */,
+				94A311732FD9A5000078A1C3 /* AudioFormatDetector.swift in Sources */,
 				AOPUS1 /* OpusDecoder.swift in Sources */,
 				94A311692FD9474C0078A1C3 /* AudioPlayViewController.swift in Sources */,
 				94A3116F2FD94A130078A1C3 /* AudioWaveformView.swift in Sources */,
 				94A311712FD99F3C0078A1C3 /* AudioPlayHeaderView.swift in Sources */,
+				AEXT1 /* UIViewController+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

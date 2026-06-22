@@ -27,6 +27,7 @@ final class SettingsViewController: UITableViewController {
     private enum DeviceRow: Int, CaseIterable {
         case connection
         case lastDevice
+        case deviceSettings
 
         var title: String {
             switch self {
@@ -34,6 +35,8 @@ final class SettingsViewController: UITableViewController {
                 return "连接状态"
             case .lastDevice:
                 return "上次连接设备"
+            case .deviceSettings:
+                return "我的设备"
             }
         }
     }
@@ -122,7 +125,6 @@ final class SettingsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsCell", for: indexPath)
-        cell.selectionStyle = .none
         cell.backgroundColor = Theme.pageControlBackground
         cell.textLabel?.textColor = Theme.pageTitleText
         cell.detailTextLabel?.textColor = Theme.pageSecondaryText
@@ -135,14 +137,29 @@ final class SettingsViewController: UITableViewController {
         if let section = Section(rawValue: indexPath.section) {
             switch section {
             case .device:
+                if let row = DeviceRow(rawValue: indexPath.row), row == .deviceSettings {
+                    cell.selectionStyle = AIRECBleChannel.shared.isConnected ? .default : .none
+                } else {
+                    cell.selectionStyle = .none
+                }
                 configureDeviceCellContent(&content, row: DeviceRow(rawValue: indexPath.row))
             case .app:
+                cell.selectionStyle = .none
                 configureAppCellContent(&content, row: AppRow(rawValue: indexPath.row))
             }
         }
 
         cell.contentConfiguration = content
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        guard let section = Section(rawValue: indexPath.section), section == .device else { return }
+        guard let row = DeviceRow(rawValue: indexPath.row), row == .deviceSettings else { return }
+        guard AIRECBleChannel.shared.isConnected else { return }
+        let vc = DeviceSettingsViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     private func configureDeviceCellContent(_ content: inout UIListContentConfiguration, row: DeviceRow?) {
@@ -159,6 +176,11 @@ final class SettingsViewController: UITableViewController {
             content.secondaryText = channel.lastConnectedDeviceIdentifier ?? "暂无"
             content.image = UIImage(systemName: "clock.arrow.circlepath")
             content.imageProperties.tintColor = Theme.audioBlue
+        case .deviceSettings:
+            content.secondaryText = channel.isConnected ? "点击进入" : "未连接"
+            content.image = UIImage(systemName: "gear")
+            content.imageProperties.tintColor = channel.isConnected ? Theme.audioBlue : Theme.pageSecondaryText
+            content.textProperties.color = channel.isConnected ? Theme.pageTitleText : Theme.pageSecondaryText
         }
     }
 
