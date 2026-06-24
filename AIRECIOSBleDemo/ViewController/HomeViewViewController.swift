@@ -33,10 +33,10 @@ class HomeViewViewController: UIViewController {
         self.title = "首页";
         setupView()
         AIRECBleChannel.shared.addObserver(self)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleDeviceFormatDidFinish),
-                                               name: .airecDeviceFormatDidFinish,
-                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(handleDeviceFormatDidFinish),
+//                                               name: .airecDeviceFormatDidFinish,
+//                                               object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -52,7 +52,7 @@ class HomeViewViewController: UIViewController {
 
     deinit {
         AIRECBleChannel.shared.removeObserver(self)
-        NotificationCenter.default.removeObserver(self, name: .airecDeviceFormatDidFinish, object: nil)
+//        NotificationCenter.default.removeObserver(self, name: .airecDeviceFormatDidFinish, object: nil)
     }
 
     private func setupView() {

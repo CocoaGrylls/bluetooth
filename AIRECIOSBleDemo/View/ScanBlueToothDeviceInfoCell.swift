@@ -73,9 +73,24 @@ class ScanBlueToothDeviceInfoCell: UITableViewCell {
     }
 
     @objc private func connectTapped() {
-        // Handle connect button tap
-        print("Connect button tapped")
         connectButtonTapped?()
+    }
+    
+    func setLoading(_ loading: Bool) {
+        connectButton.isEnabled = !loading
+        if loading {
+            let activityIndicator = UIActivityIndicatorView(style: .medium)
+            activityIndicator.color = .systemBlue
+            activityIndicator.startAnimating()
+            connectButton.setTitle("", for: .normal)
+            connectButton.addSubview(activityIndicator)
+            activityIndicator.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+            }
+        } else {
+            connectButton.subviews.forEach { $0.removeFromSuperview() }
+            connectButton.setTitle("连接", for: .normal)
+        }
     }
 
     func configure(device: AIRECBleDevice) {

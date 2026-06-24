@@ -23,6 +23,7 @@ class ScanPeripheralViewController: UIViewController {
     private var connectedDevice: AIRECBleDevice? {
         AIRECBleChannel.shared.getConnectedDevice()
     }
+    private var connectingHud: UIAlertController?
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -87,6 +88,27 @@ class ScanPeripheralViewController: UIViewController {
     private func stopScan() {
         radarContainer.markScanStopped()
         AIRECBleChannel.shared.stopScan()
+    }
+    
+    private func showConnectingLoading() {
+        let hud = UIAlertController(title: nil, message: "正在连接...\n\n", preferredStyle: .alert)
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.startAnimating()
+        hud.view.addSubview(spinner)
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: hud.view.centerXAnchor),
+            spinner.bottomAnchor.constraint(equalTo: hud.view.bottomAnchor, constant: -20)
+        ])
+        connectingHud = hud
+        present(hud, animated: true)
+    }
+    
+    private func hideConnectingLoading() {
+        if let hud = connectingHud {
+            hud.dismiss(animated: true)
+            connectingHud = nil
+        }
     }
     
     // MARK: - UI Elements 懒加载
@@ -157,7 +179,8 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
         }
 
         let cell = tableView.dequeueReusableCell(withIdentifier: ScanBlueToothDeviceInfoCell.reuseId, for: indexPath) as! ScanBlueToothDeviceInfoCell
-        cell.configure(device: devices[indexPath.row])
+        let device = devices[indexPath.row]
+        cell.configure(device: device)
         cell.connectButton.setTitle("连接", for: .normal)
         cell.connectButton.setTitleColor(.systemBlue, for: .normal)
         cell.connectButton.layer.borderColor = UIColor.systemBlue.cgColor
@@ -165,7 +188,7 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
         cell.connectButtonTapped = { [weak self] in
             guard let self = self else { return }
             let device = self.devices[indexPath.row]
-            AIRECBleChannel.shared.stopScan()
+            self.showConnectingLoading()
             AIRECBleChannel.shared.connect(device)
         }
         return cell
@@ -184,7 +207,7 @@ extension ScanPeripheralViewController: UITableViewDataSource, UITableViewDelega
         }
 
         let device = devices[indexPath.row]
-        AIRECBleChannel.shared.stopScan()
+        showConnectingLoading()
         AIRECBleChannel.shared.connect(device)
         
     }
@@ -206,21 +229,26 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
 
     func bleManager(_ manager: AIRECBleManager, didDiscover device: AIRECBleDevice) {
         guard !seenIds.contains(device.identifier) else { return }
+        if let connected = connectedDevice, connected.identifier == device.identifier {
+            return
+        }
         seenIds.insert(device.identifier)
         devices.append(device)
         tableView.reloadData()
     }
 
     func bleManager(_ manager: AIRECBleManager, didConnect device: AIRECBleDevice) {
-        radarContainer.stopScanningAnimation()
-        tableView.reloadData()
-        DispatchQueue.main.async {
-            self.onConnected?()
-            self.navigationController?.popViewController(animated: true)
+        hideConnectingLoading()
+        AIRECBleChannel.shared.stopScan()
+        devices.removeAll { item in
+            return item.identifier == device.identifier
         }
+        tableView.reloadData()
     }
+    
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
+        hideConnectingLoading()
         radarContainer.stopScanningAnimation()
         tableView.reloadData()
         let msg = reason.contains("超时") ? "连接超时，请靠近设备重试" : "连接失败，请重试"

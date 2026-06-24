@@ -2,10 +2,6 @@ import UIKit
 import AIRECBleKit
 import SnapKit
 
-extension Notification.Name {
-    static let airecDeviceFormatDidFinish = Notification.Name("AIRECIOSBleDemo.DeviceFormatDidFinish")
-}
-
 // MARK: - Row Model
 private enum SettingRow {
     case info(icon: String, title: String, value: String)
@@ -28,7 +24,7 @@ class DeviceSettingsViewController: UIViewController {
 
     // 开关状态
     private var usbSwitchOn = false
-    private var ledSwitchOn = false
+    private var autoRecordSwitchOn = false
     private var autoTransferSwitchOn = false
     private var decibelSwitchOn = false
     private var keyStartSwitchOn = false
@@ -138,14 +134,14 @@ class DeviceSettingsViewController: UIViewController {
             SettingSection(
                 header: nil,
                 rows: [
-                    .toggle(icon: "lightbulb", title: "录音灯", isOn: ledSwitchOn),
+                    .toggle(icon: "phone.connection", title: "来电自动录音", isOn: autoRecordSwitchOn),
                     .toggle(icon: "cable.connector", title: "USB支持", isOn: usbSwitchOn),
                     .toggle(icon: "power", title: "开机录音", isOn: false),
                     .toggle(icon: "speaker.wave.2", title: "分贝检测", isOn: decibelSwitchOn),
                     .disclosureWithHint(icon: "list.bullet.rectangle",
                                          title: "分段录音",
                                          subtitle: segmentLabel(segmentMinutes),
-                                         hint: "设定后，将根据您选择的时长自动分段保存录音，便于管理和回看。设置「不分段」则整场录音保存为单个文件。"),
+                                         hint: "设定后，将根据您选择的时长分段保存录音。"),
                     .disclosureWithHint(icon: "mic.circle",
                                          title: "按键启动",
                                          subtitle: "仅录音",
@@ -205,7 +201,7 @@ class DeviceSettingsViewController: UIViewController {
         storageText = preferredStorageText()
 
         usbSwitchOn = mgr.usbSwitch
-        ledSwitchOn = mgr.ledSwitch
+        autoRecordSwitchOn = mgr.ledSwitch
         segmentMinutes = mgr.segmentDuration
         idleMinutes = mgr.idleShutdown
         micGainValue = mgr.micGain
@@ -283,8 +279,8 @@ extension DeviceSettingsViewController {
     private func handleSwitchChange(title: String, isOn: Bool) {
         let mgr = AIRECBleChannel.shared
         switch title {
-        case "录音灯":
-            ledSwitchOn = isOn
+        case "来电自动录音":
+            autoRecordSwitchOn = isOn
             mgr.sendLedSwitch(isOn)
         case "USB支持":
             usbSwitchOn = isOn
@@ -366,8 +362,7 @@ extension DeviceSettingsViewController {
     private func segmentTapped() {
         let values = [0, 5, 10, 15, 30, 60, 120, 180, 240, 480]
         let labels = values.map(segmentLabel)
-        let defaultIdx = values.firstIndex(of: segmentMinutes) ?? -1
-        showPicker(title: "分段录音时间", items: labels, defaultIndex: defaultIdx) { [weak self] index, _ in
+        showPicker(title: "分段录音时间", items: labels) { [weak self] index, _ in
             guard let self = self else { return }
             let min = values[index]
             AIRECBleChannel.shared.sendSegmentDuration(min)
@@ -379,8 +374,7 @@ extension DeviceSettingsViewController {
     private func idleTapped() {
         let values = [0, 3, 5, 10, 15, 30, 60, 120, 240]
         let labels = values.map(idleLabel)
-        let defaultIdx = values.firstIndex(of: idleMinutes) ?? -1
-        showPicker(title: "空闲关机时间", items: labels, defaultIndex: defaultIdx) { [weak self] index, _ in
+        showPicker(title: "空闲关机时间", items: labels) { [weak self] index, _ in
             guard let self = self else { return }
             let min = values[index]
             AIRECBleChannel.shared.sendIdleShutdown(min)
@@ -391,8 +385,7 @@ extension DeviceSettingsViewController {
 
     private func micGainTapped() {
         let labels = (1...7).map { "增益 \($0)" }
-        let defaultIdx = max(0, min(6, micGainValue - 1))
-        showPicker(title: "麦克风增益", items: labels, defaultIndex: defaultIdx) { [weak self] index, _ in
+        showPicker(title: "麦克风增益", items: labels) { [weak self] index, _ in
             guard let self = self else { return }
             let gain = index + 1
             AIRECBleChannel.shared.sendMicGain(gain)
@@ -402,11 +395,10 @@ extension DeviceSettingsViewController {
     }
 
     private func showPicker(title: String, items: [String],
-                            defaultIndex: Int = -1,
                             didSelect: @escaping (Int, String) -> Void) {
         guard let container = view else { return }
         let picker = DeviceSettingBottomPickerView(frame: container.bounds)
-        picker.configure(title: title, items: items, defaultIndex: defaultIndex, didSelect: didSelect)
+        picker.configure(title: title, items: items, didSelect: didSelect)
         picker.show(in: container)
     }
 
@@ -443,7 +435,12 @@ extension DeviceSettingsViewController {
                 hud.dismiss(animated: true) {
                     self.showToast(success ? "✅ \(msg)" : "❌ \(msg)")
                     if success {
-                        NotificationCenter.default.post(name: .airecDeviceFormatDidFinish, object: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            AIRECBleChannel.shared.fetchDeviceInfo()
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            AIRECBleChannel.shared.fetchFileList()
+                        }
                     }
                 }
             }
