@@ -104,10 +104,14 @@ class ScanPeripheralViewController: UIViewController {
         present(hud, animated: true)
     }
     
-    private func hideConnectingLoading() {
+    private func hideConnectingLoading(completion: (() -> Void)? = nil) {
         if let hud = connectingHud {
-            hud.dismiss(animated: true)
+            hud.dismiss(animated: true) {
+                completion?()
+            }
             connectingHud = nil
+        } else {
+            completion?()
         }
     }
     
@@ -248,11 +252,13 @@ extension ScanPeripheralViewController: AIRECBleDelegate {
     
 
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
-        hideConnectingLoading()
+        hideConnectingLoading { [weak self] in
+            guard let self = self else { return }
+            let msg = reason.contains("超时") ? "连接超时，请靠近设备重试" : "连接失败，请重试"
+            self.showAlert(title: "连接失败", message: msg)
+        }
         radarContainer.stopScanningAnimation()
         tableView.reloadData()
-        let msg = reason.contains("超时") ? "连接超时，请靠近设备重试" : "连接失败，请重试"
-        showAlert(title: "连接失败", message: msg)
     }
 
     func bleManager(_ manager: AIRECBleManager, didChangeBluetoothState enabled: Bool) {

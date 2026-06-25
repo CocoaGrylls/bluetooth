@@ -333,8 +333,11 @@ extension DeviceSettingsViewController {
     private func disconnectTapped() {
         let alert = UIAlertController(title: "断开连接", message: "确认断开蓝牙连接？", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "断开", style: .destructive) { [weak self] _ in
-            self?.lastDevice = nil
-            AIRECBleChannel.shared.disconnect()
+            guard let self = self else { return }
+            self.lastDevice = nil
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                AIRECBleChannel.shared.disconnect()
+            }
         })
         alert.addAction(UIAlertAction(title: "取消", style: .cancel))
         present(alert, animated: true)
@@ -485,7 +488,9 @@ extension DeviceSettingsViewController: AIRECBleDelegate {
     func bleManager(_ manager: AIRECBleManager, didDisconnect device: AIRECBleDevice?, reason: String) {
         lastDevice = nil
         showToast("设备已断开")
-        navigationController?.popViewController(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 
     func bleManager(_ manager: AIRECBleManager, didUpdateDeviceInfo device: AIRECBleDevice) {

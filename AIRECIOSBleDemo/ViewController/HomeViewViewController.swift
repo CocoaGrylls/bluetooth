@@ -156,6 +156,7 @@ class HomeViewViewController: UIViewController {
 
     @objc private func connectButtonTapped() {
         let scanVC = ScanPeripheralViewController()
+        scanVC.hidesBottomBarWhenPushed = true;
         navigationController?.pushViewController(scanVC, animated: true)
     }
 
